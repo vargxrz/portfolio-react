@@ -11,7 +11,7 @@ const Home = () => {
             Junior
           </h1>
           <div className="buttons-home">
-            <a href="./../../../public/assets/CurriculoVargas.pdf" download="curriculo.pdf">
+            <a href="/assets/CurriculoVargas.pdf" download="curriculo.pdf">
               <button id="download-button">Download CV</button>
             </a>
             <a href="#about" id="readmore-button">Read more!</a>
