@@ -1,0 +1,48 @@
+header {
+    display: flex;
+    justify-content: center;
+    padding-top: 48px;
+}
+
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 60%;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.options-home {
+    display: flex;
+    font-size: 24px;
+    gap: 48px;
+}
+
+.options-home > a {
+    position: relative;
+    text-decoration: none;
+    color: black;
+}
+
+.options-home > a > p {
+    position: relative;
+    cursor: pointer;
+}
+
+.options-home > a > p::after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background-color: black;
+    transition: 300ms ease-in-out;
+}
+
+.options-home > a > p:hover::after {
+    width: 100%;
+}

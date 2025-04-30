@@ -1,0 +1,93 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.skills {
+    padding-top: 46px;
+    flex: 1;
+    padding-inline: 82px;
+}
+
+.projects {
+    flex: 1;
+    margin-top: 40px;
+}
+
+.skills h2, .projects h3 {
+    font-size: 68px;
+    margin-bottom: 30px;
+    font-weight: bold;
+    text-align: left;
+}
+
+.skill-name {
+    font-weight: bold;
+    font-size: 26px;
+}
+
+.bar {
+    height: 10px;
+    background-color: #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+.bar-inner {
+    height: 100%;
+    background-color: #000;
+    border-radius: 5px;
+}
+
+.project-cards {
+    padding-top: 22px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.project-card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    width: 250px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.project-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.project-card h4 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.project-card p {
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.project-link {
+    text-decoration: none;
+    color: #292f6d;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.project-link:hover {
+    color: #3e4db0;
+}

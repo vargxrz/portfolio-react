@@ -1,0 +1,85 @@
+#about {
+    max-width: none;
+    width: 100%;
+    min-height: 100vh;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    position: relative;
+}
+
+#top-shape {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+#bottom-shape {
+    width: 100%;
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+}
+
+.about-main {
+    display: flex;
+    gap: 300px;
+    z-index: 1;
+}
+
+.escrita-about {
+    display: flex;
+    text-align: left;
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+}
+
+.escrita-about h1 {
+    font-size: 62px;
+    text-align: center;
+}
+
+.escrita-about p {
+    font-size: 42px;
+    width: 800px;
+    text-align: center;
+}
+
+#imgVargas {
+    border-radius: 50%;
+    width: 500px;
+    height: 530px;
+}
+
+.reveal {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 1s ease;
+}
+
+@media (max-width: 780px) {
+    #imgVargas {
+        display: none;
+    }
+
+    .escrita-about {
+        align-items: center;
+        justify-content: center;
+    }
+
+    .escrita-about p {
+        width: 300px;
+        text-align: center;
+        font-size: 22px;
+    }
+
+    .about-main {
+        gap: 50px;
+    }
+}
