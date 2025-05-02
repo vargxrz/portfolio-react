@@ -46,3 +46,39 @@ header {
 .options-home > a > p:hover::after {
     width: 100%;
 }
+
+@media (max-width: 768px) {
+    header {
+        display: flex;
+        padding-top:0;
+    }
+
+    .content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        width: 84%;
+    }
+
+    .options-home {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .options-home p {
+      font-size: 14px;
+    }
+
+    .logo {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .options-home {
+        font-size: 18px;
+    }
+}

@@ -15,6 +15,7 @@
 
 .footer h1 {
     font-size: 68px;
+    margin-bottom: 20px;
 }
 
 .icons {
@@ -39,4 +40,26 @@
 .icons img:hover {
     transform: scale(1.15);
     opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+    #contact {
+        height: auto;
+        padding: 20px;
+        align-items: center;
+    }
+
+    .footer h1 {
+        font-size: 64px;
+    }
+
+    .icons {
+        display: flex;
+        justify-content: space-around;
+        gap: 2px;
+    }
+
+    .icons img {
+        width: 80px;
+    }
 }
