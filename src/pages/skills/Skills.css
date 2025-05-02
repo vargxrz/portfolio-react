@@ -2,20 +2,20 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    flex-wrap: wrap; /* Permite que os itens se movam para a linha seguinte em telas menores */
+    flex-wrap: wrap;
 }
 
 .skills {
     padding-top: 46px;
     flex: 1;
     padding-inline: 82px;
-    min-width: 300px; /* Garantir que não fique muito pequeno em telas menores */
+    min-width: 300px;
 }
 
 .projects {
     flex: 1;
     margin-top: 40px;
-    min-width: 300px; /* Garantir que não fique muito pequeno em telas menores */
+    min-width: 300px;
 }
 
 .skills h2, .projects h3 {

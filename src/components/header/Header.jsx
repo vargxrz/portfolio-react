@@ -9,10 +9,8 @@ const Header = () => {
 
     const toggleMenu = () => setMenuOpen(!menuOpen);
 
-    // Fechar o menu quando o usuário clica em um link
     const closeMenu = () => setMenuOpen(false);
 
-    // Fechar o menu quando o usuário clica fora dele
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (menuOpen &&
@@ -37,7 +35,6 @@ const Header = () => {
                     <img src={logoJV} alt="LogoVargas" className="logo" />
                 </div>
 
-                {/* Ícone de Menu Hamburguer com menu dropdown abaixo dele */}
                 <div ref={menuIconRef} style={{ position: 'relative' }}>
                     <div
                         className={`menu-icon ${menuOpen ? 'open' : ''}`}
@@ -46,7 +43,6 @@ const Header = () => {
                         {menuOpen ? '✕' : '☰'}
                     </div>
 
-                    {/* Menu de navegação */}
                     <div
                         ref={menuRef}
                         className={`options-home ${menuOpen ? 'open' : ''}`}
