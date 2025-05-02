@@ -5,15 +5,15 @@
     justify-content: center;
     text-align: center;
     padding-right: 70vh;
-  }
-  
-  .text-home {
+}
+
+.text-home {
     display: flex;
     font-size: 22px;
     color: #787878;
-  }
-  
-  .main-title {
+}
+
+.main-title {
     display: flex;
     flex-direction: column;
     justify-content: left;
@@ -33,9 +33,11 @@
     transition: letter-spacing 1s ease, transform 1s ease;
 }
 
-.main-title h1:hover {
-    letter-spacing: 5px;
-    transform: translateX(5px);
+@media (min-width: 769px) {
+    .main-title h1:hover {
+        letter-spacing: 5px;
+        transform: translateX(5px);
+    }
 }
 
 .buttons-home {
@@ -99,17 +101,21 @@ button {
         font-size: 22px;
     }
 
-    @media (max-width: 480px) {
-        #home {
-            height: 100vh;
-        }
+    .main-title h1 {
+        transition: none;
+    }
+}
 
-        .main-title h1 {
-            font-size: 58px;
-        }
+@media (max-width: 480px) {
+    #home {
+        height: 100vh;
+    }
 
-        #download-button, #readmore-button {
-            width: 152px;
-        }
+    .main-title h1 {
+        font-size: 58px;
+    }
+
+    #download-button, #readmore-button {
+        width: 152px;
     }
 }

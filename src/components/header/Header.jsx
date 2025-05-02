@@ -1,24 +1,64 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import logoJV from '/assets/logoJV.svg';
-import "./Header.css"
+import "./Header.css";
 
 const Header = () => {
-  return (
-    <header>
-      <div className="content">
-      <div className="logo-container">
-        <img src={logoJV} alt="LogoVargas" className="logo"/>
-        <div className="logo-text">
-        </div>
-      </div>
-      <div className="options-home">
-        <a href="#about"><p>About</p></a>
-        <a href="#skills"><p>Skills/Projects</p></a>
-        <a href="#contact"><p>Contact</p></a>
-      </div>
-      </div>
-    </header>
-  );
+    const [menuOpen, setMenuOpen] = useState(false);
+    const menuRef = useRef(null);
+    const menuIconRef = useRef(null);
+
+    const toggleMenu = () => setMenuOpen(!menuOpen);
+
+    // Fechar o menu quando o usuário clica em um link
+    const closeMenu = () => setMenuOpen(false);
+
+    // Fechar o menu quando o usuário clica fora dele
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (menuOpen &&
+                menuRef.current &&
+                !menuRef.current.contains(event.target) &&
+                menuIconRef.current &&
+                !menuIconRef.current.contains(event.target)) {
+                setMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [menuOpen]);
+
+    return (
+        <header>
+            <div className="content">
+                <div className="logo-container">
+                    <img src={logoJV} alt="LogoVargas" className="logo" />
+                </div>
+
+                {/* Ícone de Menu Hamburguer com menu dropdown abaixo dele */}
+                <div ref={menuIconRef} style={{ position: 'relative' }}>
+                    <div
+                        className={`menu-icon ${menuOpen ? 'open' : ''}`}
+                        onClick={toggleMenu}
+                    >
+                        {menuOpen ? '✕' : '☰'}
+                    </div>
+
+                    {/* Menu de navegação */}
+                    <div
+                        ref={menuRef}
+                        className={`options-home ${menuOpen ? 'open' : ''}`}
+                    >
+                        <a href="#about" onClick={closeMenu}><p>About</p></a>
+                        <a href="#skills" onClick={closeMenu}><p>Skills/Projects</p></a>
+                        <a href="#contact" onClick={closeMenu}><p>Contact</p></a>
+                    </div>
+                </div>
+            </div>
+        </header>
+    );
 };
 
 export default Header;
