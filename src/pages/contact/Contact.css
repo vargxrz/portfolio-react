@@ -44,12 +44,13 @@
 
 @media (max-width: 768px) {
     #contact {
-        height: auto;
+        height: 90%;
         padding: 20px;
         align-items: center;
     }
 
     .footer h1 {
+        padding-top: 24px;
         font-size: 64px;
     }
 

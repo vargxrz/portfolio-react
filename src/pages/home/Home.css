@@ -95,6 +95,7 @@ button {
         flex-direction: column;
         justify-content: left;
         text-align: left;
+        padding-bottom: 200px;
     }
 
     .main-title p {

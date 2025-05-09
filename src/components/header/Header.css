@@ -1,4 +1,3 @@
-/* Header */
 header {
     display: flex;
     justify-content: center;
@@ -10,7 +9,7 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 60%;
+    width: 64%;
 }
 
 .logo-container {
@@ -18,7 +17,6 @@ header {
     align-items: center;
 }
 
-/* Menu de navegação (Web) */
 .options-home {
     display: flex;
     font-size: 24px;
@@ -57,12 +55,9 @@ header {
     z-index: 100;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
-    /* Ajustes para o Mobile */
     header {
-        padding-top: 20px;
-        padding-bottom: 20px;
+        padding-top: 8px;
     }
 
     .content {
@@ -85,7 +80,6 @@ header {
         color: #3e4db0;
     }
 
-    /* Menu de Navegação (Hub) - Versão Ajustada */
     .options-home {
         position: absolute;
         top: 100%;
@@ -107,7 +101,6 @@ header {
         margin-top: 10px;
     }
 
-    /* Quando o menu está aberto */
     .options-home.open {
         transform: translateY(0);
         opacity: 1;
@@ -143,17 +136,12 @@ header {
 
 @media (max-width: 480px) {
     .content {
-        width: 90%;
+        width: 80%;
     }
 
     .logo {
         width: 100px;
         height: 100px;
-    }
-
-    .options-home {
-        right: 0;
-        max-width: 200px;
     }
 
     .options-home > a > p {
