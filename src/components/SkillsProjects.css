@@ -173,7 +173,6 @@
 
         .skills {
             width: 90%;
-            max-width: 400px;
             margin: 0 auto 2rem auto;
         }
 
@@ -186,7 +185,7 @@
 
         .project-card-new {
             width: 100%;
-            max-width: 260px;
+            max-width: 292px;
         }
 
         #skills-projects {

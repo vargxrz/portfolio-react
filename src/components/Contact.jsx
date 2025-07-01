@@ -1,21 +1,23 @@
 import React from 'react';
 import { Card, Button } from 'antd';
-import { MailOutlined, LinkedinOutlined, GithubOutlined } from '@ant-design/icons';
+import { MailOutlined, GithubOutlined } from '@ant-design/icons';
 import { MessageCircle, Heart, Coffee } from 'lucide-react';
 import './Contact.css';
+import {FaLinkedinIn} from "react-icons/fa";
+import {MdEmail} from "react-icons/md";
 
 const Contact = () => {
   const socialLinks = [
     {
       name: 'Email',
-      icon: <MailOutlined />,
+      icon: <MdEmail />,
       url: 'mailto:vargasvargasjoa@gmail.com',
       description: 'Send me an email!',
       username: 'vargasvargasjoa@gmail.com'
     },
     {
       name: 'LinkedIn',
-      icon: <LinkedinOutlined />,
+      icon: <FaLinkedinIn />,
       url: 'https://www.linkedin.com/in/vargxrz/',
       description: 'Let\'s connect',
       username: '/in/vargxrz'
@@ -37,9 +39,6 @@ const Contact = () => {
               Contact <span className="gradient-text">Me</span>
             </h2>
             <div className="title-underline"></div>
-            <p className="section-description">
-              Shall we work together? Send me a message.
-            </p>
           </div>
 
           <div className="contact-content">

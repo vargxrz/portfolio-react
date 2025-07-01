@@ -36,7 +36,7 @@ const About = () => {
 
                                 <div className="about-highlights">
                                     <div className="highlight-item">
-                                        <div className="highlight-number gradient-text">2</div>
+                                        <div className="highlight-number gradient-text">1+</div>
                                         <div className="highlight-label">Years Experience</div>
                                     </div>
                                     <div className="highlight-item">

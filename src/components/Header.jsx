@@ -1,6 +1,5 @@
-
-import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X } from 'lucide-react';
+import React, {useState, useEffect, useRef} from 'react';
+import {Menu, X} from 'lucide-react';
 import "./Header.css";
 
 const Header = () => {
@@ -39,20 +38,20 @@ const Header = () => {
     }, [menuOpen]);
 
     const navLinks = [
-        { href: "#about", label: "About" },
-        { href: "#skills", label: "Skills" },
-        { href: "#contact", label: "Contact" }
+        {href: "#about", label: "About"},
+        {href: "#skills-projects", label: "Skills & Projects"},
+        {href: "#contact", label: "Contact"}
     ];
 
     return (
         <header className={`header ${scrolled ? 'scrolled' : ''}`}>
             <div className="header-container">
                 <div className="logo-section">
-                    <div className="logo">
-                        <span className="logo-text">
-                            J<span className="logo-accent">V</span>
+                    <a href="#" className="logo">
+                         <span className="logo-text">
+                             J<span className="logo-accent">V</span>
                         </span>
-                    </div>
+                    </a>
                 </div>
 
                 <nav className="desktop-nav">
@@ -62,7 +61,7 @@ const Header = () => {
                                 key={link.href}
                                 href={link.href}
                                 className="nav-link"
-                                style={{ animationDelay: `${index * 0.1}s` }}
+                                style={{animationDelay: `${index * 0.1}s`}}
                             >
                                 <span className="nav-text">{link.label}</span>
                             </a>
@@ -76,7 +75,7 @@ const Header = () => {
                         onClick={toggleMenu}
                         aria-label="Toggle menu"
                     >
-                        {menuOpen ? <X size={24} /> : <Menu size={24} />}
+                        {menuOpen ? <X size={24}/> : <Menu size={24}/>}
                     </button>
 
                     <div
@@ -90,7 +89,7 @@ const Header = () => {
                                     href={link.href}
                                     className="mobile-nav-link"
                                     onClick={closeMenu}
-                                    style={{ animationDelay: `${index * 0.1}s` }}
+                                    style={{animationDelay: `${index * 0.1}s`}}
                                 >
                                     <span className="mobile-nav-text">{link.label}</span>
                                 </a>

@@ -213,6 +213,10 @@
     z-index: 2;
 }
 
+.logo {
+    text-decoration: none;
+}
+
 @keyframes slideInDown {
     from {
         opacity: 0;
@@ -255,7 +259,15 @@
 
 @media (max-width: 480px) {
     .header-container {
-        padding: 0 1rem;
+        padding: 0 1.5rem;
+    }
+
+    .header {
+        padding: 0.75rem 0;
+    }
+
+    .header.scrolled {
+        padding: 0.4rem 0;
     }
 
     .mobile-menu {

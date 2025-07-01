@@ -35,25 +35,25 @@ const skillData = [
 const projectData = [
     {
         title: "Virtual Menu",
-        description: "A simple virtual menu system using JavaScript, HTML, and CSS.",
+        description: "A simple virtual menu built with HTML, CSS, and JavaScript for restaurants.",
         link: "https://moveio.vercel.app/",
         icon: <FaGlobe />,
     },
     {
         title: "ZIP Code Finder",
-        description: "A ZIP code finder built with React.",
+        description: "React app to search addresses by ZIP code using public APIs.",
         link: "https://search-cep-react-omega.vercel.app/",
         icon: <FaGlobe />,
     },
     {
         title: "CRUD with Spring Boot",
-        description: "Basic CRUD for learning purposes.",
+        description: "Java + Spring Boot project with basic CRUD operations using REST and JPA.",
         link: "https://github.com/vargxrz/Spring-Product/tree/master",
         icon: <FaDatabase />,
     },
     {
         title: "Push Notification",
-        description: "Testing for Firebase notification implementation",
+        description: "Java + Firebase POC for managing and sending push notifications.",
         link: "https://github.com/vargxrz/poc-push-notification-back",
         icon: <FaBell />,
     },
