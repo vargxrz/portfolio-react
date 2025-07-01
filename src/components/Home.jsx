@@ -36,7 +36,7 @@ const Home = () => {
                   size="large"
                   icon={<DownloadOutlined />}
                   className="download-btn"
-                  href="/assets/CurriculoVargas.pdf"
+                  href="/assets/curriculoVargas.pdf"
                   download="curriculo.pdf"
               >
                 Download CV

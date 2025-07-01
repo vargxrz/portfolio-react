@@ -21,15 +21,15 @@ import "./SkillsProjects.css";
 
 const skillData = [
     { name: "Java", icon: <FaJava />, percent: 60 },
-    { name: "Spring Boot", icon: <SiSpringboot />, percent: 70 },
+    { name: "Spring Boot", icon: <SiSpringboot />, percent: 65 },
     { name: "JUnit", icon: <SiJunit5 />, percent: 40 },
-    { name: "Docker", icon: <FaDocker />, percent: 25 },
+    { name: "Docker", icon: <FaDocker />, percent: 20 },
     { name: "GitHub", icon: <FaGithub />, percent: 60 },
     { name: "React", icon: <FaReact />, percent: 55 },
-    { name: "JavaScript", icon: <SiJavascript />, percent: 30 },
-    { name: "HTML5", icon: <SiHtml5 />, percent: 80 },
-    { name: "CSS3", icon: <SiCss3 />, percent: 74 },
-    { name: "Figma", icon: <SiFigma />, percent: 60 },
+    { name: "JavaScript", icon: <SiJavascript />, percent: 50 },
+    { name: "HTML5", icon: <SiHtml5 />, percent: 60 },
+    { name: "CSS3", icon: <SiCss3 />, percent: 60 },
+    { name: "Figma", icon: <SiFigma />, percent: 70 },
 ];
 
 const projectData = [
