@@ -1,0 +1,313 @@
+
+.contact-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 6rem 2rem 2rem;
+    background: #f5f7fa;
+    overflow: hidden;
+}
+
+.contact-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.section-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 0.5rem;
+}
+
+.gradient-text {
+    background: linear-gradient(90deg, #8b5cf6, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.title-underline {
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #8b5cf6, #a855f7);
+    margin: 0 auto;
+    border-radius: 2px;
+}
+
+.section-description {
+    font-size: 1.1rem;
+    color: #64748b;
+    margin-top: 1rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.contact-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    margin: 4rem 0;
+}
+
+.intro-card {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(139, 92, 246, 0.2) !important;
+    border-radius: 24px !important;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(139, 92, 246, 0.15) !important;
+    transition: all 0.3s ease !important;
+}
+
+.intro-card:hover {
+    transform: translateY(-8px) !important;
+    box-shadow: 0 30px 80px rgba(139, 92, 246, 0.2) !important;
+}
+
+.intro-card .ant-card-body {
+    padding: 3rem !important;
+    text-align: center;
+}
+
+.intro-content {
+    color: #1a1a1a;
+}
+
+.intro-icon {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.intro-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 1.5rem;
+}
+
+.intro-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #64748b;
+    margin-bottom: 2.5rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.intro-stats {
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+    margin-top: 2rem;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #8b5cf6;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.95rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.social-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.social-card {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(139, 92, 246, 0.15) !important;
+    border-radius: 20px !important;
+    backdrop-filter: blur(20px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 8px 32px rgba(139, 92, 246, 0.1) !important;
+    animation: slideInUp 0.6s ease-out both;
+    overflow: hidden;
+}
+
+.social-card:hover {
+    transform: translateY(-10px) scale(1.02) !important;
+    border-color: rgba(139, 92, 246, 0.3) !important;
+    box-shadow: 0 25px 70px rgba(139, 92, 246, 0.2) !important;
+}
+
+.social-card .ant-card-body {
+    padding: 0 !important;
+}
+
+.social-button {
+    width: 100% !important;
+    height: auto !important;
+    padding: 2.5rem !important;
+    border: none !important;
+    background: transparent !important;
+    border-radius: 20px !important;
+    color: #1a1a1a !important;
+    transition: all 0.3s ease !important;
+}
+
+.social-button:hover {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(168, 85, 247, 0.05)) !important;
+}
+
+.social-content {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    width: 100%;
+}
+
+.social-icon {
+    font-size: 2.5rem;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #8b5cf6, #a855f7);
+    color: #ffffff;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+    transition: all 0.3s ease;
+}
+
+.social-card:hover .social-icon {
+    transform: scale(1.1) rotate(-5deg);
+    box-shadow: 0 12px 35px rgba(139, 92, 246, 0.5);
+}
+
+.social-info {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.social-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 0.3rem;
+}
+
+.social-description {
+    font-size: 1rem;
+    color: #64748b;
+    margin-bottom: 0.3rem;
+}
+
+.social-username {
+    font-size: 0.9rem;
+    color: #8b5cf6;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(139, 92, 246, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.contact-footer {
+    margin-top: 5rem;
+    padding: 3rem 0;
+    border-top: 2px solid rgba(139, 92, 246, 0.15);
+    text-align: center;
+}
+
+.footer-content {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 2rem;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+.footer-text {
+    font-size: 1.1rem;
+    color: #1a1a1a;
+    margin-bottom: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.footer-copyright {
+    font-size: 0.95rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .intro-stats {
+        gap: 2.5rem;
+        flex-wrap: wrap;
+    }
+
+    .social-links {
+        grid-template-columns: 1fr;
+    }
+
+    .social-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+    }
+
+    .social-info {
+        text-align: center;
+    }
+
+    .intro-card .ant-card-body {
+        padding: 2rem !important;
+    }
+
+    .footer-text {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .contact-footer {
+        margin-top: 3rem;
+    }
+
+    .social-button {
+        padding: 2rem !important;
+    }
+
+    .intro-icon {
+        margin-bottom: 1rem;
+    }
+}

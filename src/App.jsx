@@ -1,20 +1,19 @@
-import About from "./pages/about/About";
-import Contact from "./pages/contact/Contact";
-import Header from "./components/header/Header";
-import Home from "./pages/home/Home";
-import Skills from "./pages/skills/Skills";
+import About from "./components/About.jsx";
+import Contact from "./components/Contact.jsx";
+import Header from "./components/Header.jsx";
+import Home from "./components/Home.jsx";
 import "./main.css"
+import SkillsProjects from "./components/SkillsProjects.jsx";
 const App = () => {
   return (
     <div>
       <Header />
       <Home />
       <About />
-      <Skills />
+      <SkillsProjects/>
       <Contact />
     </div>
   );
 };
-
 
 export default App

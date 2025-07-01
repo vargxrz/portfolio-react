@@ -10,3 +10,11 @@
 html {
     scroll-behavior: smooth;
 }
+
+:root {
+    --purple-dark: #292f6d;
+    --purple-light: #8b5cf6;
+    --gray-light: #f5f5f5;
+    --text-dark: #111;
+    --text-light: #fff;
+}
