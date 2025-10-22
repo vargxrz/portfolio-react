@@ -1,101 +1,80 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {Menu, X} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Menu, X } from 'lucide-react';
 import "./Header.css";
 
 const Header = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
-    const menuRef = useRef(null);
-    const menuIconRef = useRef(null);
 
     const toggleMenu = () => setMenuOpen(!menuOpen);
-
     const closeMenu = () => setMenuOpen(false);
 
     useEffect(() => {
         const handleScroll = () => {
-            const offset = window.scrollY;
-            setScrolled(offset > 50);
-        };
-
-        const handleClickOutside = (event) => {
-            if (menuOpen &&
-                menuRef.current &&
-                !menuRef.current.contains(event.target) &&
-                menuIconRef.current &&
-                !menuIconRef.current.contains(event.target)) {
-                setMenuOpen(false);
-            }
+            setScrolled(window.scrollY > 50);
         };
 
         window.addEventListener('scroll', handleScroll);
-        document.addEventListener('mousedown', handleClickOutside);
-
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [menuOpen]);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const navLinks = [
-        {href: "#about", label: "About"},
-        {href: "#skills-projects", label: "Skills & Projects"},
-        {href: "#contact", label: "Contact"}
+        { href: "#about", label: "About" },
+        { href: "#skills", label: "Skills" },
+        { href: "#projects", label: "Projects" },
+        { href: "#contact", label: "Contact" }
     ];
+
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     return (
         <header className={`header ${scrolled ? 'scrolled' : ''}`}>
-            <div className="header-container">
-                <div className="logo-section">
-                    <a href="#" className="logo">
-                         <span className="logo-text">
-                             J<span className="logo-accent">V</span>
-                        </span>
-                    </a>
-                </div>
+            <div className="container">
+                <div className="header-content">
+                    <button 
+                        className="logo" 
+                        onClick={scrollToTop}
+                        aria-label="Go to top"
+                    >
+                        <span className="logo-text mono">vargas</span>
+                    </button>
 
-                <nav className="desktop-nav">
-                    <div className="nav-links">
+                    <nav className="desktop-nav">
                         {navLinks.map((link, index) => (
                             <a
                                 key={link.href}
                                 href={link.href}
                                 className="nav-link"
-                                style={{animationDelay: `${index * 0.1}s`}}
+                                style={{ animationDelay: `${index * 0.1}s` }}
                             >
-                                <span className="nav-text">{link.label}</span>
+                                {link.label}
                             </a>
                         ))}
-                    </div>
-                </nav>
+                    </nav>
 
-                <div className="mobile-nav" ref={menuIconRef}>
                     <button
-                        className={`menu-toggle ${menuOpen ? 'open' : ''}`}
+                        className={`mobile-toggle ${menuOpen ? 'open' : ''}`}
                         onClick={toggleMenu}
                         aria-label="Toggle menu"
                     >
-                        {menuOpen ? <X size={24}/> : <Menu size={24}/>}
+                        {menuOpen ? <X size={20} /> : <Menu size={20} />}
                     </button>
+                </div>
 
-                    <div
-                        ref={menuRef}
-                        className={`mobile-menu ${menuOpen ? 'open' : ''}`}
-                    >
-                        <div className="mobile-menu-content">
-                            {navLinks.map((link, index) => (
-                                <a
-                                    key={link.href}
-                                    href={link.href}
-                                    className="mobile-nav-link"
-                                    onClick={closeMenu}
-                                    style={{animationDelay: `${index * 0.1}s`}}
-                                >
-                                    <span className="mobile-nav-text">{link.label}</span>
-                                </a>
-                            ))}
-                        </div>
-                    </div>
+                <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
+                    {navLinks.map((link, index) => (
+                        <a
+                            key={link.href}
+                            href={link.href}
+                            className="mobile-nav-link"
+                            onClick={closeMenu}
+                            style={{ animationDelay: `${index * 0.1}s` }}
+                        >
+                            {link.label}
+                        </a>
+                    ))}
                 </div>
             </div>
         </header>
