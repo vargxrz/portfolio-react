@@ -10,8 +10,9 @@ const Home = () => {
         const terminal = terminalRef.current;
         const commands = [
             'vargas',
-            'hello-word',
-            'npm install',
+            'cd vargas-dev',
+            'git commit -m "vargxrz"',
+            'git clone https://github.com/vargxrz',
             'full-stack developer',
             'console.log("vargxrz")',
             '',
@@ -55,7 +56,7 @@ const Home = () => {
     const downloadCV = () => {
         const link = document.createElement('a');
         link.href = '/assets/curriculoVargas.pdf';
-        link.download = 'curriculo-joao-vargas.pdf';
+        link.download = 'curriculo-vargas.pdf';
         link.click();
     };
 

@@ -79,6 +79,25 @@ body {
     padding: 0 var(--space-md);
 }
 
+/* Mobile container adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 var(--space-lg);
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 var(--space-md);
+    }
+}
+
+@media (max-width: 360px) {
+    .container {
+        padding: 0 var(--space-sm);
+    }
+}
+
 .section {
     padding: var(--space-3xl) 0;
 }

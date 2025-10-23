@@ -26,21 +26,21 @@ const Skills = () => {
         {
             title: "Backend",
             skills: [
-                { name: "Java", icon: <FaJava />, level: 65 },
+                { name: "Java", icon: <FaJava />, level: 74 },
                 { name: "Spring Boot", icon: <SiSpringboot />, level: 70 },
-                { name: "JUnit", icon: <SiJunit5 />, level: 45 },
-                { name: "Docker", icon: <FaDocker />, level: 30 },
+                { name: "JUnit", icon: <SiJunit5 />, level: 60 },
+                { name: "Docker", icon: <FaDocker />, level: 40 },
                 { name: "Postgres", icon: <SiPostgresql />, level: 60 }
             ]
         },
         {
             title: "Frontend",
             skills: [
-                { name: "React", icon: <FaReact />, level: 60 },
+                { name: "React", icon: <FaReact />, level: 65 },
                 { name: "JavaScript", icon: <FaJs />, level: 55 },
-                { name: "HTML5", icon: <FaHtml5 />, level: 75 },
+                { name: "HTML5", icon: <FaHtml5 />, level: 70 },
                 { name: "CSS3", icon: <FaCss3Alt />, level: 70 },
-                { name: "Flutter", icon: <FaFigma />, level: 65 },
+                { name: "Flutter", icon: <FaFigma />, level: 40 },
             ]
         },
     ];
