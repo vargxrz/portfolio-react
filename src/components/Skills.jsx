@@ -1,20 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import {
-    FaJava,
-    FaReact,
-    FaDocker,
-    FaGithub,
-    FaHtml5,
-    FaCss3Alt,
-    FaJs,
-    FaFigma
-} from 'react-icons/fa';
-import {
-    SiSpringboot,
-    SiJunit5,
-    SiTypescript,
-    SiTailwindcss, SiPostgresql
-} from 'react-icons/si';
+import React, {useEffect, useRef} from 'react';
+import {FaCss3Alt, FaDocker, FaHtml5, FaJava, FaJs, FaReact} from 'react-icons/fa';
+import {SiFlutter, SiJunit5, SiPostgresql, SiSpringboot} from 'react-icons/si';
 import useIsMobile from '../hooks/useIsMobile';
 import './Skills.css';
 
@@ -24,37 +10,86 @@ const Skills = () => {
 
     const skillCategories = [
         {
-            title: "Backend",
+            title: "Backend Development",
+            subtitle: "Server & Database Technologies",
             skills: [
-                { name: "Java", icon: <FaJava />, level: 74 },
-                { name: "Spring Boot", icon: <SiSpringboot />, level: 70 },
-                { name: "JUnit", icon: <SiJunit5 />, level: 60 },
-                { name: "Docker", icon: <FaDocker />, level: 40 },
-                { name: "Postgres", icon: <SiPostgresql />, level: 60 }
+                { 
+                    name: "Java", 
+                    description: "Object-oriented programming",
+                    icon: <FaJava />, 
+                    level: 74 
+                },
+                { 
+                    name: "Spring Boot", 
+                    description: "Enterprise framework",
+                    icon: <SiSpringboot />, 
+                    level: 70 
+                },
+                { 
+                    name: "PostgreSQL", 
+                    description: "Relational database",
+                    icon: <SiPostgresql />, 
+                    level: 60 
+                },
+                { 
+                    name: "JUnit", 
+                    description: "Unit testing framework",
+                    icon: <SiJunit5 />, 
+                    level: 60 
+                },
+                { 
+                    name: "Docker", 
+                    description: "Containerization platform",
+                    icon: <FaDocker />, 
+                    level: 45 
+                }
             ]
         },
         {
-            title: "Frontend",
+            title: "Frontend Development", 
+            subtitle: "Modern UI & Client Technologies",
             skills: [
-                { name: "React", icon: <FaReact />, level: 65 },
-                { name: "JavaScript", icon: <FaJs />, level: 55 },
-                { name: "HTML5", icon: <FaHtml5 />, level: 70 },
-                { name: "CSS3", icon: <FaCss3Alt />, level: 70 },
-                { name: "Flutter", icon: <FaFigma />, level: 40 },
+                { 
+                    name: "React", 
+                    description: "Component-based library",
+                    icon: <FaReact />, 
+                    level: 65 
+                },
+                {
+                    name: "Flutter",
+                    description: "Flutter mobile development",
+                    icon: <SiFlutter />,
+                    level: 50
+                },
+                { 
+                    name: "JavaScript", 
+                    description: "Dynamic programming language",
+                    icon: <FaJs />, 
+                    level: 60 
+                },
+                { 
+                    name: "HTML5", 
+                    description: "Modern markup language",
+                    icon: <FaHtml5 />, 
+                    level: 75 
+                },
+                { 
+                    name: "CSS3", 
+                    description: "Styling & animations",
+                    icon: <FaCss3Alt />, 
+                    level: 70 
+                }
             ]
-        },
+        }
     ];
-
-    // For mobile, show only the most important categories
-    const displayCategories = isMobile ? skillCategories.slice(0, 3) : skillCategories;
 
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
-                        const progressBars = entry.target.querySelectorAll('.skill-progress-fill');
-                        progressBars.forEach((bar, index) => {
+                        const skillBars = entry.target.querySelectorAll('.skill-bar-fill');
+                        skillBars.forEach((bar, index) => {
                             const level = bar.getAttribute('data-level');
                             setTimeout(() => {
                                 bar.style.width = `${level}%`;
@@ -63,7 +98,7 @@ const Skills = () => {
                     }
                 });
             },
-            { threshold: 0.3 }
+            { threshold: 0.2 }
         );
 
         if (skillsRef.current) {
@@ -82,8 +117,7 @@ const Skills = () => {
                     </div>
 
                     <h2 className="section-title">
-                        Technologies I work with
-                        <span className="text-gradient"> daily</span>
+                        Technologies
                     </h2>
 
                     <p className="section-description">
@@ -94,35 +128,44 @@ const Skills = () => {
                     </p>
                 </div>
 
-                <div className="skills-grid">
-                    {displayCategories.map((category, categoryIndex) => (
+                <div className="skills-container">
+                    {skillCategories.map((category, categoryIndex) => (
                         <div
                             key={category.title}
                             className="skill-category"
-                            style={{ animationDelay: `${categoryIndex * 0.1}s` }}
+                            style={{ animationDelay: `${categoryIndex * 0.2}s` }}
                         >
-                            <h3 className="category-title">{category.title}</h3>
-                            <div className="skills-list">
+                            <div className="category-header">
+                                <h3 className="category-title">{category.title}</h3>
+                                <p className="category-subtitle">{category.subtitle}</p>
+                            </div>
+                            
+                            <div className="skills-grid">
                                 {category.skills.map((skill, skillIndex) => (
                                     <div
                                         key={skill.name}
                                         className="skill-item"
-                                        style={{ animationDelay: `${(categoryIndex * 0.1) + (skillIndex * 0.05)}s` }}
+                                        style={{ animationDelay: `${(categoryIndex * 0.2) + (skillIndex * 0.05)}s` }}
                                     >
-                                        <div className="skill-header">
-                                            <div className="skill-info">
-                                                <div className="skill-icon">
-                                                    {skill.icon}
-                                                </div>
-                                                <span className="skill-name">{skill.name}</span>
+                                        <div className="skill-left">
+                                            <div className="skill-icon">
+                                                {skill.icon}
                                             </div>
-                                            <span className="skill-level">{skill.level}%</span>
+                                            <div className="skill-info">
+                                                <div className="skill-name">{skill.name}</div>
+                                                {!isMobile && (
+                                                    <div className="skill-description">{skill.description}</div>
+                                                )}
+                                            </div>
                                         </div>
-                                        <div className="skill-progress">
-                                            <div
-                                                className="skill-progress-fill"
-                                                data-level={skill.level}
-                                            ></div>
+                                        <div className="skill-right">
+                                            <div className="skill-level">{skill.level}%</div>
+                                            <div className="skill-bar">
+                                                <div
+                                                    className="skill-bar-fill"
+                                                    data-level={skill.level}
+                                                ></div>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}

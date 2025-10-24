@@ -47,14 +47,17 @@ const About = () => {
                         <div className="about-description">
                             <p>
                                 Hi, I'm João Gabriel, a <strong>full-stack developer</strong> passionate about creating user experiences.
-                                Currently working as a junior developer, I aim to write clean code and build solutions that generate real impact.
+                                {isMobile 
+                                    ? " Currently working as a junior developer, focused on writing clean code and building impactful solutions."
+                                    : " Currently working as a junior developer, I aim to write clean code and build solutions that generate real impact."
+                                }
                             </p>
                         </div>
 
                         <div className="stats-grid">
                             <div className="stat-item">
                                 <span className="stat-number text-gradient">2+</span>
-                                <span className="stat-label">Years of Experience</span>
+                                <span className="stat-label">Years Experience</span>
                             </div>
                             <div className="stat-item">
                                 <span className="stat-number text-gradient">∞</span>

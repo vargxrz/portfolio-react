@@ -69,6 +69,7 @@ body {
     --radius-md: 8px;
     --radius-lg: 12px;
     --radius-xl: 16px;
+    --radius-2xl: 20px;
     --radius-full: 9999px;
 }
 
@@ -181,14 +182,78 @@ body {
     animation: slideInRight 0.6s ease-out;
 }
 
-/* Responsive breakpoints */
-@media (max-width: 1024px) {
+/* Mobile-first responsive design for iPhone optimization */
+
+/* iPhone and small mobile breakpoint */
+@media (max-width: 480px) {
     :root {
-        --space-3xl: 3rem;
-        --space-2xl: 2.5rem;
+        --space-3xl: 2.5rem;
+        --space-2xl: 2rem;
+        --space-xl: 1.5rem;
+        --space-lg: 1.25rem;
+        --space-md: 1rem;
+        --space-sm: 0.75rem;
+        --space-xs: 0.5rem;
+    }
+    
+    html {
+        font-size: 16px; /* Better for iPhone readability */
+        scroll-behavior: smooth;
+        overflow-x: hidden;
+    }
+    
+    body {
+        -webkit-overflow-scrolling: touch;
+        overflow-x: hidden;
+    }
+    
+    .container {
+        padding: 0 var(--space-lg);
+        max-width: 100%;
+    }
+    
+    .section {
+        padding: var(--space-2xl) 0;
+        min-height: 100vh;
+        min-height: 100dvh; /* iPhone safe area */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        scroll-snap-align: start;
+        position: relative;
+    }
+    
+    /* iPhone-specific typography optimizations */
+    .section-title {
+        font-size: clamp(2.2rem, 8vw, 3.2rem) !important;
+        line-height: 1.1 !important;
+        margin-bottom: var(--space-xl) !important;
+        letter-spacing: -0.03em !important;
+        text-align: center;
+    }
+    
+    .section-description {
+        font-size: 1.1rem !important;
+        line-height: 1.7 !important;
+        margin-bottom: var(--space-xl) !important;
+        text-align: center;
+        max-width: 100%;
+        padding: 0 var(--space-sm);
+    }
+    
+    .section-tag {
+        text-align: center;
+        margin-bottom: var(--space-lg) !important;
+    }
+    
+    .section-tag .mono {
+        font-size: 1rem !important;
+        margin-bottom: 0 !important;
+        color: var(--text-secondary) !important;
     }
 }
 
+/* Regular mobile breakpoint */
 @media (max-width: 768px) {
     :root {
         --space-3xl: 3rem;
@@ -199,6 +264,12 @@ body {
     
     html {
         font-size: 16px;
+        overflow-x: hidden;
+    }
+    
+    body {
+        overflow-x: hidden;
+        scroll-snap-type: y mandatory;
     }
     
     .container {
@@ -207,58 +278,74 @@ body {
     }
     
     .section {
-        padding: 0;
+        padding: var(--space-3xl) 0;
+        min-height: 100vh;
+        min-height: 100dvh;
+        scroll-snap-align: start;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
     
-    /* Mobile sections should fill viewport */
+    /* Mobile sections layout */
     .home,
     .about,
     .skills,
     .projects,
     .contact {
         scroll-snap-align: start;
-        min-height: 100vh;
-        min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
     }
 }
 
-@media (max-width: 480px) {
+/* Tablet breakpoint */
+@media (max-width: 1024px) {
     :root {
-        --space-3xl: 2.5rem;
-        --space-2xl: 2rem;
-        --space-xl: 1.5rem;
-        --space-lg: 1.25rem;
-        --space-md: 1rem;
+        --space-3xl: 3rem;
+        --space-2xl: 2.5rem;
+    }
+}
+
+/* iPhone specific optimizations */
+@media (max-width: 430px) {
+    /* iPhone 14 Pro Max and smaller */
+    .container {
+        padding: 0 var(--space-md);
     }
     
-    html {
-        font-size: 15px;
+    .section {
+        padding: var(--space-xl) 0;
+    }
+}
+
+@media (max-width: 390px) {
+    /* iPhone 12/13/14 Pro and smaller */
+    :root {
+        --space-lg: 1rem;
+        --space-md: 0.875rem;
     }
     
     .container {
         padding: 0 var(--space-md);
     }
     
-    .section {
-        padding: 0;
+    .section-title {
+        font-size: clamp(2rem, 9vw, 2.8rem) !important;
+    }
+}
+
+@media (max-width: 375px) {
+    /* iPhone SE and smaller */
+    :root {
+        --space-lg: 0.875rem;
+        --space-md: 0.75rem;
     }
     
-    /* Better mobile typography */
     .section-title {
-        font-size: clamp(2rem, 7vw, 2.8rem) !important;
-        line-height: 1.1;
-        margin-bottom: var(--space-lg) !important;
+        font-size: clamp(1.8rem, 10vw, 2.5rem) !important;
     }
     
     .section-description {
-        font-size: 1rem;
-        line-height: 1.6;
-        margin-bottom: var(--space-xl) !important;
-    }
-    
-    .section-tag .mono {
-        font-size: 0.9rem !important;
-        margin-bottom: var(--space-md) !important;
+        font-size: 1rem !important;
     }
 }
 

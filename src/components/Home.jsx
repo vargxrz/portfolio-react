@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { ArrowDown, Download, Github, Linkedin, Mail } from 'lucide-react';
+import useIsMobile from '../hooks/useIsMobile';
 import './Home.css';
 
 const Home = () => {
     const terminalRef = useRef(null);
-    const typingRef = useRef(null);
+    const isMobile = useIsMobile();
 
     useEffect(() => {
         const terminal = terminalRef.current;
@@ -20,26 +21,23 @@ const Home = () => {
 
         let commandIndex = 0;
         let charIndex = 0;
-        let isDeleting = false;
 
         const typeWriter = () => {
             if (!terminal) return;
 
             const currentCommand = commands[commandIndex];
             
-            if (!isDeleting) {
-                terminal.textContent = currentCommand.slice(0, charIndex + 1);
-                charIndex++;
+            terminal.textContent = currentCommand.slice(0, charIndex + 1);
+            charIndex++;
 
-                if (charIndex === currentCommand.length) {
-                    setTimeout(() => {
-                        commandIndex++;
-                        charIndex = 0;
-                        if (commandIndex >= commands.length) {
-                            commandIndex = 0;
-                        }
-                    }, 1500);
-                }
+            if (charIndex === currentCommand.length) {
+                setTimeout(() => {
+                    commandIndex++;
+                    charIndex = 0;
+                    if (commandIndex >= commands.length) {
+                        commandIndex = 0;
+                    }
+                }, 1500);
             }
 
             setTimeout(typeWriter, 100);
@@ -77,7 +75,10 @@ const Home = () => {
                         </h1>
 
                         <p className="hero-description">
-                            I'm passionate about technology and code, with a love for design and clean, efficient solutions.
+                            {isMobile 
+                                ? "Passionate about creating amazing digital experiences with clean code and modern design."
+                                : "I'm passionate about technology and code, with a love for design and clean, efficient solutions."
+                            }
                         </p>
 
                         <div className="hero-actions">
@@ -85,7 +86,7 @@ const Home = () => {
                                 className="btn btn-primary"
                                 onClick={downloadCV}
                             >
-                                <Download size={18} />
+                                <Download size={isMobile ? 20 : 18} />
                                 Download CV
                             </button>
                             
@@ -94,37 +95,39 @@ const Home = () => {
                                 onClick={scrollToAbout}
                             >
                                 Learn More
-                                <ArrowDown size={18} />
+                                <ArrowDown size={isMobile ? 20 : 18} />
                             </button>
                         </div>
 
-                        <div className="hero-links">
-                            <a 
-                                href="https://github.com/vargxrz" 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="social-link"
-                                aria-label="GitHub"
-                            >
-                                <Github size={20} />
-                            </a>
-                            <a 
-                                href="https://linkedin.com/in/vargxrz" 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="social-link"
-                                aria-label="LinkedIn"
-                            >
-                                <Linkedin size={20} />
-                            </a>
-                            <a 
-                                href="mailto:vargasvargasjoa@gmail.com"
-                                className="social-link"
-                                aria-label="Email"
-                            >
-                                <Mail size={20} />
-                            </a>
-                        </div>
+                        {!isMobile && (
+                            <div className="hero-links">
+                                <a 
+                                    href="https://github.com/vargxrz" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="social-link"
+                                    aria-label="GitHub"
+                                >
+                                    <Github size={20} />
+                                </a>
+                                <a 
+                                    href="https://linkedin.com/in/vargxrz" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="social-link"
+                                    aria-label="LinkedIn"
+                                >
+                                    <Linkedin size={20} />
+                                </a>
+                                <a 
+                                    href="mailto:vargasvargasjoa@gmail.com"
+                                    className="social-link"
+                                    aria-label="Email"
+                                >
+                                    <Mail size={20} />
+                                </a>
+                            </div>
+                        )}
                     </div>
 
                     <div className="hero-visual">
@@ -135,6 +138,7 @@ const Home = () => {
                                     <span className="control minimize"></span>
                                     <span className="control maximize"></span>
                                 </div>
+                                {!isMobile && <span className="terminal-title mono">@vargxrz</span>}
                             </div>
                             <div className="terminal-body">
                                 <div className="terminal-line">
@@ -158,10 +162,12 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
-                <div className="scroll-indicator">
-                    <div className="scroll-line"></div>
-                    <span className="scroll-text mono"></span>
-                </div>
+                
+                {!isMobile && (
+                    <div className="scroll-indicator">
+                        <div className="scroll-line"></div>
+                    </div>
+                )}
             </div>
         </section>
     );
