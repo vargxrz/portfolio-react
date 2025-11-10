@@ -48,7 +48,10 @@ const Home = () => {
     }, []);
 
     const scrollToAbout = () => {
-        document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' });
+        document.querySelector('#about')?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+        });
     };
 
     const downloadCV = () => {

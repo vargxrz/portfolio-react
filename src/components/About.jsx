@@ -6,7 +6,7 @@ import './About.css';
 
 const About = () => {
     const isMobile = useIsMobile();
-    
+
     const highlights = [
         {
             icon: <Code2 size={24} />,
@@ -70,8 +70,8 @@ const About = () => {
                         <div className="about-visual">
                             <div className="highlights-grid">
                                 {highlights.map((item, index) => (
-                                    <div 
-                                        key={index} 
+                                    <div
+                                        key={index}
                                         className="highlight-card"
                                         style={{ animationDelay: `${index * 0.1}s` }}
                                     >

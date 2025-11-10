@@ -1,177 +1,173 @@
-import React, {useEffect, useRef} from 'react';
-import {FaCss3Alt, FaDocker, FaHtml5, FaJava, FaJs, FaReact} from 'react-icons/fa';
-import {SiFlutter, SiJunit5, SiPostgresql, SiSpringboot} from 'react-icons/si';
-import useIsMobile from '../hooks/useIsMobile';
+import React, { useState } from 'react';
+import { Code2, Server, Smartphone, Database, Layout, Wrench, ChevronRight } from 'lucide-react';
 import './Skills.css';
 
 const Skills = () => {
-    const skillsRef = useRef(null);
-    const isMobile = useIsMobile();
+    const [expandedCard, setExpandedCard] = useState(null);
 
     const skillCategories = [
         {
-            title: "Backend Development",
-            subtitle: "Server & Database Technologies",
+            id: 'frontend',
+            title: 'Frontend Development',
+            icon: <Layout size={28} />,
+            description: 'Creating responsive and interactive user interfaces',
+            color: '#000000',
             skills: [
-                { 
-                    name: "Java", 
-                    description: "Object-oriented programming",
-                    icon: <FaJava />, 
-                    level: 74 
+                {
+                    name: 'React',
+                    level: 'Intermediate',
+                    description: 'Component architecture, hooks, state management'
                 },
-                { 
-                    name: "Spring Boot", 
-                    description: "Enterprise framework",
-                    icon: <SiSpringboot />, 
-                    level: 70 
+                {
+                    name: 'JavaScript',
+                    level: 'Advanced',
+                    description: 'ES6+, async/await, modern patterns'
                 },
-                { 
-                    name: "PostgreSQL", 
-                    description: "Relational database",
-                    icon: <SiPostgresql />, 
-                    level: 60 
+                {
+                    name: 'HTML5 & CSS3',
+                    level: 'Advanced',
+                    description: 'Semantic markup, animations, responsive design'
                 },
-                { 
-                    name: "JUnit", 
-                    description: "Unit testing framework",
-                    icon: <SiJunit5 />, 
-                    level: 60 
-                },
-                { 
-                    name: "Docker", 
-                    description: "Containerization platform",
-                    icon: <FaDocker />, 
-                    level: 45 
+                {
+                    name: 'Flutter',
+                    level: 'Intermediate',
+                    description: 'Cross-platform mobile development'
                 }
             ]
         },
         {
-            title: "Frontend Development", 
-            subtitle: "Modern UI & Client Technologies",
+            id: 'backend',
+            title: 'Backend Development',
+            icon: <Server size={28} />,
+            description: 'Building robust and scalable server-side applications',
+            color: '#404040',
             skills: [
-                { 
-                    name: "React", 
-                    description: "Component-based library",
-                    icon: <FaReact />, 
-                    level: 65 
+                {
+                    name: 'Java',
+                    level: 'Advanced',
+                    description: 'OOP, design patterns, clean code'
                 },
                 {
-                    name: "Flutter",
-                    description: "Flutter mobile development",
-                    icon: <SiFlutter />,
-                    level: 50
+                    name: 'Spring Boot',
+                    level: 'Advanced',
+                    description: 'REST APIs, security, microservices'
                 },
-                { 
-                    name: "JavaScript", 
-                    description: "Dynamic programming language",
-                    icon: <FaJs />, 
-                    level: 60 
+                {
+                    name: 'PostgreSQL',
+                    level: 'Intermediate',
+                    description: 'Database design, queries, optimization'
                 },
-                { 
-                    name: "HTML5", 
-                    description: "Modern markup language",
-                    icon: <FaHtml5 />, 
-                    level: 75 
+                {
+                    name: 'Docker',
+                    level: 'Intermediate',
+                    description: 'Containerization, deployment'
+                }
+            ]
+        },
+        {
+            id: 'tools',
+            title: 'Tools & Practices',
+            icon: <Wrench size={28} />,
+            description: 'Development tools and methodologies',
+            color: '#737373',
+            skills: [
+                {
+                    name: 'Git & GitHub',
+                    level: 'Advanced',
+                    description: 'Version control, collaboration'
                 },
-                { 
-                    name: "CSS3", 
-                    description: "Styling & animations",
-                    icon: <FaCss3Alt />, 
-                    level: 70 
+                {
+                    name: 'JUnit',
+                    level: 'Advanced',
+                    description: 'Unit testing, TDD'
+                },
+                {
+                    name: 'Responsive Design',
+                    level: 'Advanced',
+                    description: 'Mobile-first, accessibility'
+                },
+                {
+                    name: 'Agile/Scrum',
+                    level: 'Advanced',
+                    description: 'Team collaboration, sprints'
                 }
             ]
         }
     ];
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        const skillBars = entry.target.querySelectorAll('.skill-bar-fill');
-                        skillBars.forEach((bar, index) => {
-                            const level = bar.getAttribute('data-level');
-                            setTimeout(() => {
-                                bar.style.width = `${level}%`;
-                            }, index * 100);
-                        });
-                    }
-                });
-            },
-            { threshold: 0.2 }
-        );
-
-        if (skillsRef.current) {
-            observer.observe(skillsRef.current);
-        }
-
-        return () => observer.disconnect();
-    }, []);
+    const toggleCard = (id) => {
+        setExpandedCard(expandedCard === id ? null : id);
+    };
 
     return (
-        <section id="skills" className="skills section" ref={skillsRef}>
+        <section id="skills" className="skills section">
             <div className="container">
                 <div className="skills-header">
                     <div className="section-tag">
                         <span className="mono">// My expertise</span>
                     </div>
-
                     <h2 className="section-title">
-                        Technologies
+                        Skills & <span className="text-gradient">Technologies</span>
                     </h2>
-
                     <p className="section-description">
-                        {isMobile
-                            ? "Here are my main technical skills and expertise areas."
-                            : "I'm constantly learning and expanding my skillset. Here are the technologies I'm most comfortable with and use in my projects."
-                        }
+                        Technologies and tools I use to build digital experiences
                     </p>
                 </div>
 
-                <div className="skills-container">
-                    {skillCategories.map((category, categoryIndex) => (
+                <div className="skills-cards">
+                    {skillCategories.map((category, index) => (
                         <div
-                            key={category.title}
-                            className="skill-category"
-                            style={{ animationDelay: `${categoryIndex * 0.2}s` }}
+                            key={category.id}
+                            className={`skill-card ${expandedCard === category.id ? 'expanded' : ''}`}
+                            style={{
+                                '--delay': `${index * 0.1}s`,
+                                '--accent-color': category.color
+                            }}
                         >
-                            <div className="category-header">
-                                <h3 className="category-title">{category.title}</h3>
-                                <p className="category-subtitle">{category.subtitle}</p>
+                            <div
+                                className="card-header"
+                                onClick={() => toggleCard(category.id)}
+                            >
+                                <div className="card-icon">
+                                    {category.icon}
+                                </div>
+                                <div className="card-title-group">
+                                    <h3 className="card-title">{category.title}</h3>
+                                    <p className="card-description">{category.description}</p>
+                                </div>
+                                <div className="card-arrow">
+                                    <ChevronRight size={20} />
+                                </div>
                             </div>
-                            
-                            <div className="skills-grid">
-                                {category.skills.map((skill, skillIndex) => (
-                                    <div
-                                        key={skill.name}
-                                        className="skill-item"
-                                        style={{ animationDelay: `${(categoryIndex * 0.2) + (skillIndex * 0.05)}s` }}
-                                    >
-                                        <div className="skill-left">
-                                            <div className="skill-icon">
-                                                {skill.icon}
+
+                            <div className="card-content">
+                                <div className="skills-list">
+                                    {category.skills.map((skill, skillIndex) => (
+                                        <div
+                                            key={skill.name}
+                                            className="skill-item"
+                                            style={{ '--skill-delay': `${skillIndex * 0.05}s` }}
+                                        >
+                                            <div className="skill-header">
+                                                <span className="skill-name">{skill.name}</span>
+                                                <span className="skill-level mono">{skill.level}</span>
                                             </div>
-                                            <div className="skill-info">
-                                                <div className="skill-name">{skill.name}</div>
-                                                {!isMobile && (
-                                                    <div className="skill-description">{skill.description}</div>
-                                                )}
-                                            </div>
+                                            <p className="skill-description">{skill.description}</p>
                                         </div>
-                                        <div className="skill-right">
-                                            <div className="skill-level">{skill.level}%</div>
-                                            <div className="skill-bar">
-                                                <div
-                                                    className="skill-bar-fill"
-                                                    data-level={skill.level}
-                                                ></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     ))}
+                </div>
+
+                {/* Floating decorative elements */}
+                <div className="skills-decoration">
+                    <div className="deco-line line-1"></div>
+                    <div className="deco-line line-2"></div>
+                    <div className="deco-dot dot-1"></div>
+                    <div className="deco-dot dot-2"></div>
+                    <div className="deco-dot dot-3"></div>
                 </div>
             </div>
         </section>
@@ -179,3 +175,4 @@ const Skills = () => {
 };
 
 export default Skills;
+
