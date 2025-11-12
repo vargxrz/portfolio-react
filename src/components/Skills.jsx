@@ -20,17 +20,17 @@ const Skills = () => {
                 },
                 {
                     name: 'JavaScript',
-                    level: 'Advanced',
+                    level: 'Intermediate',
                     description: 'ES6+, async/await, modern patterns'
                 },
                 {
                     name: 'HTML5 & CSS3',
-                    level: 'Advanced',
+                    level: 'Intermediate',
                     description: 'Semantic markup, animations, responsive design'
                 },
                 {
                     name: 'Flutter',
-                    level: 'Intermediate',
+                    level: 'Beginner',
                     description: 'Cross-platform mobile development'
                 }
             ]
@@ -44,12 +44,12 @@ const Skills = () => {
             skills: [
                 {
                     name: 'Java',
-                    level: 'Advanced',
+                    level: 'Intermediate',
                     description: 'OOP, design patterns, clean code'
                 },
                 {
                     name: 'Spring Boot',
-                    level: 'Advanced',
+                    level: 'Intermediate',
                     description: 'REST APIs, security, microservices'
                 },
                 {
@@ -59,7 +59,7 @@ const Skills = () => {
                 },
                 {
                     name: 'Docker',
-                    level: 'Intermediate',
+                    level: 'Beginner',
                     description: 'Containerization, deployment'
                 }
             ]
@@ -78,12 +78,12 @@ const Skills = () => {
                 },
                 {
                     name: 'JUnit',
-                    level: 'Advanced',
+                    level: 'Intermediate',
                     description: 'Unit testing, TDD'
                 },
                 {
                     name: 'Responsive Design',
-                    level: 'Advanced',
+                    level: 'Intermediate',
                     description: 'Mobile-first, accessibility'
                 },
                 {
