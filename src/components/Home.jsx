@@ -56,7 +56,7 @@ const Home = () => {
 
     const downloadCV = () => {
         const link = document.createElement('a');
-        link.href = '/assets/curriculoVargas.pdf';
+        link.href = '/assets/CurriculoVargas.pdf';
         link.download = 'curriculo-vargas.pdf';
         link.click();
     };
