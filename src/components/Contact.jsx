@@ -96,7 +96,7 @@ const Contact = () => {
                             build by vargas
                         </p>
                         <p className="footer-copyright">
-                            © 2025 All rights reserved.
+                            © 2026 All rights reserved.
                         </p>
                     </div>
                 </div>
