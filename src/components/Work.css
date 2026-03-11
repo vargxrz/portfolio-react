@@ -1,0 +1,251 @@
+/* =============================================
+   WORK SECTION - Mobile First
+   Grid Uniforme com Cards Clicáveis
+   ============================================= */
+
+.work-section {
+    position: relative;
+    min-height: 100vh;
+    padding: var(--spacing-4xl) 0 var(--spacing-3xl);
+    background: var(--color-primary);
+    overflow: hidden;
+}
+
+/* =============================================
+   HEADER
+   ============================================= */
+
+.work-header {
+    text-align: center;
+    margin-bottom: var(--spacing-4xl);
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.work-header .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.work-header .label-line {
+    width: 48px;
+    height: 1px;
+    background: var(--color-accent);
+}
+
+.work-header .label-text {
+    font-size: var(--font-xs);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+}
+
+.work-header .section-heading {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 8vw, 4rem);
+    font-weight: 400;
+    line-height: 1.1;
+    margin-bottom: var(--spacing-lg);
+    color: var(--color-text-primary);
+}
+
+.work-header .heading-accent {
+    font-style: italic;
+    color: var(--color-accent);
+    display: inline;
+}
+
+.work-header .section-description {
+    font-size: clamp(1rem, 2.5vw, 1.125rem);
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* =============================================
+   GRID DE PROJETOS
+   ============================================= */
+
+.work-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-5xl);
+}
+
+/* =============================================
+   WORK CARD - Minimalista com Bordas Sutis
+   ============================================= */
+
+.work-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xl);
+    background: var(--color-surface);
+    border: 1px solid rgba(168, 162, 158, 0.2);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.work-card:hover {
+    transform: scale(1.02);
+    border-color: rgba(234, 88, 12, 0.4);
+    box-shadow: 0 0 24px 4px rgba(234, 88, 12, 0.15);
+}
+
+/* Featured - Border laranja 2px */
+.work-card--featured {
+    border: 2px solid var(--color-accent);
+}
+
+
+/* Título - Crimson Pro light */
+.card-title {
+    font-family: var(--font-display);
+    font-size: clamp(24px, 3vw, 28px);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--color-text-primary);
+    margin: 0 0 var(--spacing-md) 0;
+}
+
+/* Descrição - DM Sans */
+.card-description {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--spacing-lg) 0;
+}
+
+/* Tech Stack Tags - Minimal */
+.card-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    margin-top: auto;
+}
+
+.tech-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    padding: 4px 10px;
+    background: rgba(168, 162, 158, 0.08);
+    border: 1px solid rgba(168, 162, 158, 0.12);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-tertiary);
+    transition: all 0.2s ease;
+}
+
+/* Remover estilos antigos desnecessários */
+.featured-badge,
+.card-header,
+.card-meta,
+.card-number,
+.card-category,
+.card-footer,
+.card-cta,
+.card-links,
+.card-link,
+.card-gradient,
+.card-content {
+    display: none;
+}
+
+
+/* =============================================
+   TABLET (640px+)
+   ============================================= */
+
+@media (min-width: 640px) {
+    .work-header .section-description {
+        max-width: 600px;
+    }
+
+    .work-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-lg);
+    }
+}
+
+/* =============================================
+   TABLET (768px+)
+   ============================================= */
+
+@media (min-width: 768px) {
+    .work-header {
+        text-align: left;
+        margin-bottom: var(--spacing-5xl);
+    }
+
+    .work-header .heading-accent {
+        display: inline;
+    }
+
+    .work-grid {
+        gap: var(--spacing-xl);
+        margin-top: var(--spacing-6xl);
+    }
+
+    .work-card {
+        padding: var(--spacing-2xl);
+    }
+}
+
+/* =============================================
+   DESKTOP (1024px+)
+   ============================================= */
+
+@media (min-width: 1024px) {
+    .work-section {
+        padding: var(--spacing-5xl) 0 var(--spacing-4xl);
+    }
+
+    .work-header .section-description {
+        max-width: 720px;
+    }
+
+    .work-grid {
+        gap: var(--spacing-xl);
+    }
+
+    .work-card {
+        padding: 40px;
+    }
+}
+
+/* =============================================
+   LARGE DESKTOP (1280px+)
+   ============================================= */
+
+@media (min-width: 1280px) {
+    .work-grid {
+        gap: var(--spacing-2xl);
+    }
+}
+
+/* =============================================
+   ACCESSIBILITY
+   ============================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .work-card,
+    .tech-tag {
+        transition: none;
+    }
+    
+    .work-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+}

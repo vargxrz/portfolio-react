@@ -1,0 +1,30 @@
+.interactive-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.mesh-svg {
+    width: 100%;
+    height: 100%;
+    opacity: 0.6;
+}
+
+/* Mobile: versão estática simplificada */
+@media (max-width: 768px) {
+    .mesh-svg {
+        opacity: 0.3;
+    }
+}
+
+/* Respeitar preferência de movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+    .mesh-svg * {
+        animation: none !important;
+    }
+}

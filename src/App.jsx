@@ -1,20 +1,21 @@
-import About from "./components/About.jsx";
-import Contact from "./components/Contact.jsx";
 import Header from "./components/Header.jsx";
-import Home from "./components/Home.jsx";
-import Skills from "./components/Skills.jsx";
-import Projects from "./components/Projects.jsx";
+import Hero from "./components/Hero.jsx";
+import Work from "./components/Work.jsx";
+import Footer from "./components/Footer.jsx";
+import ScrollProgress from "./components/ScrollProgress.jsx";
+import useSmoothScroll from "./hooks/useSmoothScroll.js";
 import "./main.css";
 
 const App = () => {
+  useSmoothScroll();
+
   return (
     <div>
+      <ScrollProgress />
       <Header />
-      <Home />
-      <About />
-      <Skills />
-      <Projects />
-      <Contact />
+      <Hero />
+      <Work />
+      <Footer />
     </div>
   );
 };

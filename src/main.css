@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&family=Manrope:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Crimson+Pro:wght@200;300;400;500;600;700;800;900&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
 
 * {
     margin: 0;
@@ -12,95 +12,204 @@ html {
 }
 
 body {
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: var(--font-sans);
     font-weight: 400;
     line-height: 1.6;
     color: var(--text-primary);
     background-color: var(--bg-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
 }
 
 :root {
-    /* Colors - Modern minimal palette */
-    --bg-primary: #fafafa;
-    --bg-secondary: #ffffff;
-    --bg-tertiary: #f5f5f5;
-    --bg-accent: rgba(0, 0, 0, 0.02);
+    /* =============================================
+       COLORS - Editorial Monochromatic Light
+       ============================================= */
     
-    --text-primary: #0a0a0a;
-    --text-secondary: #525252;
-    --text-tertiary: #a3a3a3;
-    --text-inverse: #ffffff;
+    /* Primary Colors (New naming) */
+    --color-primary: #FAFAF9;
+    --color-surface: #FFFFFF;
+    --color-accent: #EA580C;
     
-    --accent-primary: #000000;
-    --accent-secondary: #404040;
-    --accent-gradient: linear-gradient(135deg, #000000 0%, #404040 100%);
+    /* Text Colors (New naming) */
+    --color-text-primary: #0A0A0A;
+    --color-text-secondary: #57534E;
+    --color-text-tertiary: #A8A29E;
+    --color-text-inverse: #FAFAF9;
     
-    --border-light: #e5e5e5;
-    --border-medium: #d4d4d4;
-    --border-dark: #a3a3a3;
+    /* Border Colors (New naming) */
+    --color-border: #E7E5E4;
+    --color-border-medium: #D6D3D1;
+    --color-border-dark: #A8A29E;
     
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+    /* Legacy Aliases (Backwards compatibility) */
+    --bg-primary: var(--color-primary);
+    --bg-secondary: var(--color-surface);
+    --bg-tertiary: #F5F5F4;
+    --bg-accent: rgba(234, 88, 12, 0.04);
+    --text-primary: var(--color-text-primary);
+    --text-secondary: var(--color-text-secondary);
+    --text-tertiary: var(--color-text-tertiary);
+    --text-inverse: var(--color-text-inverse);
+    --accent-primary: var(--color-accent);
+    --accent-secondary: #DC2626;
+    --accent-tertiary: #C2410C;
+    --accent-gradient: linear-gradient(135deg, #EA580C 0%, #DC2626 100%);
+    --border-light: var(--color-border);
+    --border-medium: var(--color-border-medium);
+    --border-dark: var(--color-border-dark);
     
-    /* Typography */
-    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
-    --font-display: "Manrope", var(--font-sans);
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.10);
     
-    /* Spacing */
+    /* =============================================
+       TYPOGRAPHY
+       ============================================= */
+    
+    --font-display: "Crimson Pro", Georgia, serif;
+    --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-modern: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", "Fira Code", monospace;
+    
+    /* Font Sizes (New naming) */
+    --font-xs: 0.75rem;      /* 12px */
+    --font-sm: 0.875rem;     /* 14px */
+    --font-base: 1rem;       /* 16px */
+    --font-md: 1.0625rem;    /* 17px */
+    --font-lg: 1.125rem;     /* 18px */
+    --font-xl: 1.25rem;      /* 20px */
+    
+    /* Legacy Aliases */
+    --text-xs: var(--font-xs);
+    --text-sm: var(--font-sm);
+    --text-base: var(--font-base);
+    --text-lg: var(--font-lg);
+    --text-xl: var(--font-xl);
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.875rem;
+    --text-4xl: 2.25rem;
+    --text-5xl: 3rem;
+    --text-6xl: 3.75rem;
+    --text-7xl: 4.5rem;
+    --text-8xl: 6rem;
+    --text-9xl: 8rem;
+    
+    /* =============================================
+       SPACING - Generous Editorial (New naming)
+       ============================================= */
+    
+    --spacing-xs: 0.5rem;     /* 8px */
+    --spacing-sm: 0.75rem;    /* 12px */
+    --spacing-md: 1rem;       /* 16px */
+    --spacing-lg: 1.5rem;     /* 24px */
+    --spacing-xl: 2rem;       /* 32px */
+    --spacing-2xl: 3rem;      /* 48px */
+    --spacing-3xl: 4rem;      /* 64px */
+    --spacing-4xl: 6rem;      /* 96px */
+    --spacing-5xl: 8rem;      /* 128px */
+    --spacing-6xl: 10rem;     /* 160px */
+    --spacing-7xl: 12rem;     /* 192px */
+    --spacing-8xl: 14rem;     /* 224px */
+    
+    /* Legacy Aliases */
     --space-xs: 0.25rem;
-    --space-sm: 0.5rem;
-    --space-md: 1rem;
-    --space-lg: 1.5rem;
-    --space-xl: 2rem;
-    --space-2xl: 3rem;
-    --space-3xl: 4rem;
+    --space-sm: var(--spacing-xs);
+    --space-md: var(--spacing-md);
+    --space-lg: var(--spacing-lg);
+    --space-xl: var(--spacing-xl);
+    --space-2xl: var(--spacing-2xl);
+    --space-3xl: var(--spacing-3xl);
+    --space-4xl: var(--spacing-4xl);
+    --space-5xl: var(--spacing-5xl);
+    --space-6xl: var(--spacing-6xl);
     
-    /* Transitions */
-    --transition-fast: 0.15s ease-out;
-    --transition-medium: 0.3s ease-out;
-    --transition-slow: 0.5s ease-out;
+    /* =============================================
+       TRANSITIONS & ANIMATIONS
+       ============================================= */
     
-    /* Border radius */
+    --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    
+    /* Legacy Aliases */
+    --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-medium: var(--transition-smooth);
+    --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    
+    /* =============================================
+       BORDER RADIUS
+       ============================================= */
+    
     --radius-sm: 4px;
     --radius-md: 8px;
     --radius-lg: 12px;
     --radius-xl: 16px;
     --radius-2xl: 20px;
     --radius-full: 9999px;
+    
+    /* =============================================
+       LAYOUT
+       ============================================= */
+    
+    --max-width: 1280px;
+    --max-width-narrow: 960px;
+    --max-width-text: 720px;
 }
 
 /* Global utilities */
 .container {
-    max-width: 1200px;
+    width: 100%;
+    max-width: var(--max-width);
     margin: 0 auto;
-    padding: 0 var(--space-md);
+    padding: 0 var(--spacing-2xl);
+}
+
+.container-narrow {
+    width: 100%;
+    max-width: var(--max-width-narrow);
+    margin: 0 auto;
+    padding: 0 var(--spacing-2xl);
+}
+
+.container-text {
+    width: 100%;
+    max-width: var(--max-width-text);
+    margin: 0 auto;
+    padding: 0 var(--spacing-2xl);
 }
 
 /* Mobile container adjustments */
+@media (max-width: 1024px) {
+    .container,
+    .container-narrow,
+    .container-text {
+        padding: 0 var(--spacing-xl);
+    }
+}
+
 @media (max-width: 768px) {
-    .container {
-        padding: 0 var(--space-lg);
+    .container,
+    .container-narrow,
+    .container-text {
+        padding: 0 var(--spacing-lg);
     }
 }
 
 @media (max-width: 480px) {
-    .container {
-        padding: 0 var(--space-md);
-    }
-}
-
-@media (max-width: 360px) {
-    .container {
-        padding: 0 var(--space-sm);
+    .container,
+    .container-narrow,
+    .container-text {
+        padding: 0 var(--spacing-md);
     }
 }
 
 .section {
-    padding: var(--space-3xl) 0;
+    padding: var(--space-5xl) 0;
+    position: relative;
 }
 
 .text-gradient {
@@ -118,7 +227,7 @@ body {
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(40px);
     }
     to {
         opacity: 1;
@@ -138,7 +247,7 @@ body {
 @keyframes slideInLeft {
     from {
         opacity: 0;
-        transform: translateX(-30px);
+        transform: translateX(-40px);
     }
     to {
         opacity: 1;
@@ -149,7 +258,7 @@ body {
 @keyframes slideInRight {
     from {
         opacity: 0;
-        transform: translateX(30px);
+        transform: translateX(40px);
     }
     to {
         opacity: 1;
@@ -162,24 +271,100 @@ body {
         transform: translateY(0px);
     }
     50% {
-        transform: translateY(-10px);
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes rotateIn {
+    from {
+        opacity: 0;
+        transform: rotate(-5deg) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(0) scale(1);
     }
 }
 
 .animate-fade-in {
-    animation: fadeIn 0.6s ease-out;
+    animation: fadeIn 0.8s var(--transition-medium);
 }
 
 .animate-fade-in-up {
-    animation: fadeInUp 0.6s ease-out;
+    animation: fadeInUp 0.8s var(--transition-medium);
 }
 
 .animate-slide-in-left {
-    animation: slideInLeft 0.6s ease-out;
+    animation: slideInLeft 0.8s var(--transition-medium);
 }
 
 .animate-slide-in-right {
-    animation: slideInRight 0.6s ease-out;
+    animation: slideInRight 0.8s var(--transition-medium);
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.6s var(--transition-medium);
+}
+
+/* Typography Utilities */
+.heading-display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+.heading-1 {
+    font-family: var(--font-display);
+    font-size: clamp(var(--text-5xl), 8vw, var(--text-8xl));
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.heading-2 {
+    font-family: var(--font-display);
+    font-size: clamp(var(--text-4xl), 6vw, var(--text-6xl));
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+.heading-3 {
+    font-family: var(--font-display);
+    font-size: clamp(var(--text-3xl), 4vw, var(--text-5xl));
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+}
+
+.body-large {
+    font-size: var(--text-xl);
+    line-height: 1.7;
+    color: var(--text-secondary);
+}
+
+.body-regular {
+    font-size: var(--text-base);
+    line-height: 1.6;
+}
+
+.label {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
 }
 
 /* Mobile-first responsive design for iPhone optimization */
@@ -351,7 +536,7 @@ body {
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -361,8 +546,46 @@ body {
 ::-webkit-scrollbar-thumb {
     background: var(--border-medium);
     border-radius: var(--radius-full);
+    transition: background var(--transition-fast);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--border-dark);
+    background: var(--accent-primary);
+}
+
+/* Selection */
+::selection {
+    background: var(--accent-primary);
+    color: var(--text-inverse);
+}
+
+::-moz-selection {
+    background: var(--accent-primary);
+    color: var(--text-inverse);
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Focus Styles */
+:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+}
+
+/* Image Optimization */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
 }

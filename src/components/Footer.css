@@ -1,0 +1,310 @@
+/* =============================================
+   FOOTER SECTION - Mobile First
+   Minimalist contact & credits
+   ============================================= */
+
+.footer-section {
+    position: relative;
+    padding: var(--spacing-4xl) 0 var(--spacing-3xl);
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    overflow: hidden;
+}
+
+.footer-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
+}
+
+/* =============================================
+   CTA SECTION
+   ============================================= */
+
+.footer-cta {
+    text-align: center;
+}
+
+.cta-heading {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 7vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-xl);
+}
+
+.cta-accent {
+    font-style: italic;
+    color: var(--color-accent);
+    display: block;
+}
+
+.cta-description {
+    font-size: clamp(1rem, 2.5vw, 1.125rem);
+    line-height: 1.8;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-2xl);
+    max-width: 100%;
+}
+
+.cta-email {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+    font-weight: 400;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    padding: 0 0 4px 0;
+    border-bottom: 1px solid rgba(168, 162, 158, 0.2);
+    transition: border-color 0.3s ease;
+    word-break: break-all;
+}
+
+.cta-email:hover {
+    border-bottom-color: var(--color-text-primary);
+}
+
+.cta-email:active {
+    transform: translateY(0);
+}
+
+/* =============================================
+   SOCIAL LINKS
+   ============================================= */
+
+.footer-social {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.social-label {
+    font-size: var(--font-xs);
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.social-links {
+    display: flex;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    width: 56px;
+    height: 56px;
+    background: var(--color-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    color: var(--color-text-primary);
+    text-decoration: none;
+    font-size: var(--font-sm);
+    font-weight: 500;
+    transition: all var(--transition-smooth);
+}
+
+.social-link:active {
+    transform: scale(0.95);
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+}
+
+/* =============================================
+   DIVIDER
+   ============================================= */
+
+.footer-divider {
+    height: 1px;
+    background: rgba(168, 162, 158, 0.15);
+    margin: 0;
+}
+
+/* =============================================
+   BOTTOM SECTION
+   ============================================= */
+
+.footer-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+    text-align: center;
+}
+
+.footer-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.footer-text {
+    font-size: var(--font-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+}
+
+.footer-year {
+    font-size: var(--font-sm);
+    color: var(--color-text-tertiary);
+    margin: 0;
+}
+
+
+/* =============================================
+   TABLET (640px+)
+   ============================================= */
+
+@media (min-width: 640px) {
+    .cta-description {
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cta-email {
+        word-break: normal;
+    }
+
+    .social-links {
+        gap: var(--spacing-xl);
+    }
+
+    .social-link {
+        width: 52px;
+        height: 52px;
+    }
+}
+
+/* =============================================
+   TABLET (768px+)
+   ============================================= */
+
+@media (min-width: 768px) {
+    .footer-section {
+        padding: var(--spacing-5xl) 0 var(--spacing-4xl);
+    }
+
+    .cta-heading {
+        margin-bottom: var(--spacing-2xl);
+    }
+
+    .cta-accent {
+        display: inline;
+    }
+
+    .cta-description {
+        max-width: 600px;
+    }
+
+    .social-link {
+        width: auto;
+        min-width: 52px;
+        padding: 0 var(--spacing-lg);
+    }
+
+    .social-link span {
+        display: inline;
+    }
+
+    /* Hover Effects - Desktop Only */
+    .social-link:hover {
+        background: var(--color-accent);
+        border-color: var(--color-accent);
+        color: white;
+        transform: translateY(-4px);
+    }
+
+    .social-link:active {
+        transform: translateY(-2px);
+    }
+
+    /* Manter footer-bottom centralizado mesmo em desktop */
+    .footer-info {
+        flex-direction: row;
+        gap: var(--spacing-sm);
+        align-items: center;
+    }
+}
+
+/* =============================================
+   DESKTOP (1024px+)
+   ============================================= */
+
+@media (min-width: 1024px) {
+    .footer-cta {
+        text-align: left;
+    }
+
+    .cta-description {
+        margin-left: 0;
+        max-width: 650px;
+    }
+
+    .footer-social {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .social-links {
+        justify-content: flex-start;
+    }
+}
+
+/* =============================================
+   ACCESSIBILITY
+   ============================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .cta-email,
+    .social-link {
+        transition: none;
+    }
+
+    .cta-email:hover {
+        border-bottom-color: var(--color-text-primary);
+    }
+
+    .social-link:hover {
+        transform: none;
+    }
+
+    .heart-icon {
+        animation: none;
+    }
+}
+
+/* =============================================
+   TOUCH OPTIMIZATION
+   ============================================= */
+
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets on mobile */
+    .social-link {
+        width: 56px;
+        height: 56px;
+    }
+
+    .cta-email {
+        padding: var(--spacing-lg) var(--spacing-xl);
+    }
+
+    /* Prevent hover effects on touch devices */
+    .social-link:hover {
+        transform: none;
+        background: var(--color-primary);
+        border-color: var(--color-border);
+        color: var(--color-text-primary);
+    }
+}
