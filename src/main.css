@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&family=Manrope:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
 
 * {
     margin: 0;
@@ -22,33 +22,34 @@ body {
 }
 
 :root {
-    /* Colors - Modern minimal palette */
-    --bg-primary: #fafafa;
-    --bg-secondary: #ffffff;
-    --bg-tertiary: #f5f5f5;
-    --bg-accent: rgba(0, 0, 0, 0.02);
+    /* Colors - Modern minimal blue palette */
+    --bg-primary: #ffffff;
+    --bg-secondary: #F5F6F8;
+    --bg-tertiary: #eef0f4;
+    --bg-accent: rgba(47, 91, 255, 0.05);
     
-    --text-primary: #0a0a0a;
-    --text-secondary: #525252;
-    --text-tertiary: #a3a3a3;
+    --text-primary: #111111;
+    --text-secondary: #555555;
+    --text-tertiary: #999999;
     --text-inverse: #ffffff;
     
-    --accent-primary: #000000;
-    --accent-secondary: #404040;
-    --accent-gradient: linear-gradient(135deg, #000000 0%, #404040 100%);
+    --accent-primary: #2F5BFF;
+    --accent-secondary: #1a44e8;
+    --accent-gradient: linear-gradient(135deg, #2F5BFF 0%, #1a44e8 100%);
+    --accent-light: rgba(47, 91, 255, 0.1);
     
-    --border-light: #e5e5e5;
-    --border-medium: #d4d4d4;
-    --border-dark: #a3a3a3;
+    --border-light: #e8eaed;
+    --border-medium: #d0d4dc;
+    --border-dark: #a0a8b8;
     
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+    --shadow-sm: 0 1px 4px rgba(47, 91, 255, 0.06);
+    --shadow-md: 0 4px 16px rgba(47, 91, 255, 0.10);
+    --shadow-lg: 0 8px 32px rgba(47, 91, 255, 0.14);
     
     /* Typography */
     --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
-    --font-display: "Manrope", var(--font-sans);
+    --font-display: "Inter", var(--font-sans);
     
     /* Spacing */
     --space-xs: 0.25rem;
@@ -112,6 +113,18 @@ body {
 
 .mono {
     font-family: var(--font-mono);
+}
+
+/* Scroll reveal */
+.reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Animations */

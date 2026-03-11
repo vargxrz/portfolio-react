@@ -1,90 +1,70 @@
-
-import React from 'react';
-import { Code2, Coffee, Lightbulb, Target } from 'lucide-react';
-import useIsMobile from '../hooks/useIsMobile';
+import React, { useEffect, useRef } from 'react';
+import { Code2, Lightbulb, BookOpen } from 'lucide-react';
 import './About.css';
 
 const About = () => {
-    const isMobile = useIsMobile();
+    const sectionRef = useRef(null);
 
-    const highlights = [
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.querySelectorAll('.reveal').forEach((el) => {
+                            el.classList.add('visible');
+                        });
+                    }
+                });
+            },
+            { threshold: 0.15 }
+        );
+        if (sectionRef.current) observer.observe(sectionRef.current);
+        return () => observer.disconnect();
+    }, []);
+
+    const traits = [
         {
-            icon: <Code2 size={24} />,
+            icon: <Code2 size={22} />,
             title: "Clean Code",
-            description: "Writing maintainable and efficient code"
         },
         {
-            icon: <Lightbulb size={24} />,
+            icon: <Lightbulb size={22} />,
             title: "Problem Solving",
-            description: "Finding creative solutions to complex challenges"
         },
         {
-            icon: <Target size={24} />,
-            title: "Goal Oriented",
-            description: "Focused on delivering results that matter"
-        },
-        {
-            icon: <Coffee size={24} />,
-            title: "Always Learning",
-            description: "Constantly evolving with new technologies"
+            icon: <BookOpen size={22} />,
+            title: "Continuous Learning",
         }
     ];
 
     return (
-        <section id="about" className="about section">
+        <section id="about" className="about section" ref={sectionRef}>
             <div className="container">
-                <div className="about-content">
-                    <div className="about-text">
-                        <div className="section-tag">
-                            <span className="mono">// About me</span>
-                        </div>
-                        
-                        <h2 className="section-title">
-                            Building digital experiences with
-                            <span className="text-gradient"> passion</span>
-                        </h2>
+                <div className="about-inner">
+                    <div className="section-label reveal">About</div>
 
-                        <div className="about-description">
-                            <p>
-                                Hi, I'm João Gabriel, a <strong>full-stack developer</strong> passionate about creating user experiences.
-                                {isMobile 
-                                    ? " Currently working as a junior developer, focused on writing clean code and building impactful solutions."
-                                    : " Currently working as a junior developer, I aim to write clean code and build solutions that generate real impact."
-                                }
-                            </p>
-                        </div>
+                    <h2 className="section-title reveal">
+                        Building digital experiences<br />
+                        with <span className="text-gradient">passion</span>
+                    </h2>
 
-                        <div className="stats-grid">
-                            <div className="stat-item">
-                                <span className="stat-number text-gradient">2+</span>
-                                <span className="stat-label">Years Experience</span>
+                    <p className="about-bio reveal">
+                        Hi, I'm João Gabriel, a <strong>full-stack developer</strong> passionate about creating user experiences.
+                        Currently working as a junior developer, focused on writing clean code and building impactful solutions.
+                    </p>
+
+                    <div className="traits-row">
+                        {traits.map((trait, i) => (
+                            <div
+                                key={trait.title}
+                                className="trait-item reveal"
+                                style={{ transitionDelay: `${i * 0.1}s` }}
+                            >
+                                <div className="trait-icon">{trait.icon}</div>
+                                <span className="trait-title">{trait.title}</span>
                             </div>
-                            <div className="stat-item">
-                                <span className="stat-number text-gradient">∞</span>
-                                <span className="stat-label">Learning Never Stops</span>
-                            </div>
-                        </div>
+                        ))}
                     </div>
-
-                    {!isMobile && (
-                        <div className="about-visual">
-                            <div className="highlights-grid">
-                                {highlights.map((item, index) => (
-                                    <div
-                                        key={index}
-                                        className="highlight-card"
-                                        style={{ animationDelay: `${index * 0.1}s` }}
-                                    >
-                                        <div className="highlight-icon">
-                                            {item.icon}
-                                        </div>
-                                        <h3 className="highlight-title">{item.title}</h3>
-                                        <p className="highlight-description">{item.description}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
         </section>

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { ArrowDown, Download, Github, Linkedin, Mail } from 'lucide-react';
+import { Github, ArrowRight } from 'lucide-react';
 import useIsMobile from '../hooks/useIsMobile';
 import './Home.css';
 
@@ -47,18 +47,11 @@ const Home = () => {
         return () => clearTimeout(timer);
     }, []);
 
-    const scrollToAbout = () => {
-        document.querySelector('#about')?.scrollIntoView({
+    const scrollToProjects = () => {
+        document.querySelector('#projects')?.scrollIntoView({
             behavior: 'smooth',
-            block: 'center'
+            block: 'start'
         });
-    };
-
-    const downloadCV = () => {
-        const link = document.createElement('a');
-        link.href = '/assets/CurriculoVargas.pdf';
-        link.download = 'curriculo-vargas.pdf';
-        link.click();
     };
 
     return (
@@ -67,110 +60,75 @@ const Home = () => {
                 <div className="home-content">
                     <div className="hero-text">
                         <div className="intro-line">
-                            <span className="intro-tag mono">// Hello</span>
+                            <span className="intro-tag mono">Hello —</span>
                         </div>
                         
                         <h1 className="hero-title">
                             <span className="name-line">I'm João Vargas</span>
                             <span className="role-line">
-                                <span className="text-gradient">Full-Stack</span> Developer
+                                <span className="text-gradient">Full Stack</span> Developer
                             </span>
                         </h1>
 
                         <p className="hero-description">
-                            {isMobile 
-                                ? "Passionate about creating amazing digital experiences with clean code and modern design."
-                                : "I'm passionate about technology and code, with a love for design and clean, efficient solutions."
-                            }
+                            Passionate about building clean and scalable software.
                         </p>
 
                         <div className="hero-actions">
                             <button 
                                 className="btn btn-primary"
-                                onClick={downloadCV}
+                                onClick={scrollToProjects}
                             >
-                                <Download size={isMobile ? 20 : 18} />
-                                Download CV
+                                View Projects
+                                <ArrowRight size={18} />
                             </button>
                             
-                            <button 
+                            <a 
+                                href="https://github.com/vargxrz"
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="btn btn-secondary"
-                                onClick={scrollToAbout}
                             >
-                                Learn More
-                                <ArrowDown size={isMobile ? 20 : 18} />
-                            </button>
+                                <Github size={18} />
+                                GitHub
+                            </a>
                         </div>
-
-                        {!isMobile && (
-                            <div className="hero-links">
-                                <a 
-                                    href="https://github.com/vargxrz" 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="social-link"
-                                    aria-label="GitHub"
-                                >
-                                    <Github size={20} />
-                                </a>
-                                <a 
-                                    href="https://linkedin.com/in/vargxrz" 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="social-link"
-                                    aria-label="LinkedIn"
-                                >
-                                    <Linkedin size={20} />
-                                </a>
-                                <a 
-                                    href="mailto:vargasvargasjoa@gmail.com"
-                                    className="social-link"
-                                    aria-label="Email"
-                                >
-                                    <Mail size={20} />
-                                </a>
-                            </div>
-                        )}
                     </div>
 
-                    <div className="hero-visual">
-                        <div className="terminal-window">
-                            <div className="terminal-header">
-                                <div className="terminal-controls">
-                                    <span className="control close"></span>
-                                    <span className="control minimize"></span>
-                                    <span className="control maximize"></span>
+                    {!isMobile && (
+                        <div className="hero-visual">
+                            <div className="terminal-window">
+                                <div className="terminal-header">
+                                    <div className="terminal-controls">
+                                        <span className="control close"></span>
+                                        <span className="control minimize"></span>
+                                        <span className="control maximize"></span>
+                                    </div>
+                                    <span className="terminal-title mono">@vargxrz</span>
                                 </div>
-                                {!isMobile && <span className="terminal-title mono">@vargxrz</span>}
+                                <div className="terminal-body">
+                                    <div className="terminal-line">
+                                        <span className="prompt mono">~ $</span>
+                                        <span ref={terminalRef} className="command mono"></span>
+                                        <span className="cursor"></span>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="terminal-body">
-                                <div className="terminal-line">
-                                    <span className="prompt mono">~ $</span>
-                                    <span ref={terminalRef} className="command mono"></span>
-                                    <span className="cursor"></span>
+
+                            <div className="floating-elements">
+                                <div className="floating-icon icon-1">
+                                    <span className="mono">{`< >`}</span>
+                                </div>
+                                <div className="floating-icon icon-2">
+                                    <span className="mono">{'{ }'}</span>
+                                </div>
+                                <div className="floating-icon icon-3">
+                                    <span className="mono">{'[ ]'}</span>
                                 </div>
                             </div>
                         </div>
-
-                        <div className="floating-elements">
-                            <div className="floating-icon icon-1">
-                                <span className="mono">{`< >`}</span>
-                            </div>
-                            <div className="floating-icon icon-2">
-                                <span className="mono">{'{ }'}</span>
-                            </div>
-                            <div className="floating-icon icon-3">
-                                <span className="mono">{'[ ]'}</span>
-                            </div>
-                        </div>
-                    </div>
+                    )}
                 </div>
-                
-                {!isMobile && (
-                    <div className="scroll-indicator">
-                        <div className="scroll-line"></div>
-                    </div>
-                )}
             </div>
         </section>
     );
