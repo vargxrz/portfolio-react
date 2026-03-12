@@ -12,6 +12,7 @@
     padding: var(--spacing-6xl) var(--spacing-xl);
     background: var(--color-primary);
     overflow: hidden;
+    transition: background-color 0.3s ease;
 }
 
 .hero-grid {
@@ -50,6 +51,7 @@
     border-radius: 50%;
     display: inline-block;
     animation: pulse-dot 2s ease-in-out infinite;
+    transition: background-color 0.3s ease;
 }
 
 @keyframes pulse-dot {
@@ -69,6 +71,7 @@
     text-transform: uppercase;
     color: var(--color-text-tertiary);
     font-weight: 500;
+    transition: color 0.3s ease;
 }
 
 /* Heading statement - Crimson Pro Light */
@@ -80,6 +83,7 @@
     color: var(--color-text-primary);
     margin: var(--spacing-lg) 0 var(--spacing-md);
     letter-spacing: -0.02em;
+    transition: color 0.3s ease;
 }
 
 .hero-heading span {
@@ -93,6 +97,7 @@
     font-weight: 500;
     color: var(--color-accent);
     margin-bottom: var(--spacing-2xl);
+    transition: color 0.3s ease;
 }
 
 /* Actions */
@@ -121,7 +126,7 @@
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease, border-color 0.3s ease;
 }
 
 .btn-primary-minimal::before {
@@ -194,21 +199,6 @@
     pointer-events: none;
 }
 
-.bg-glow {
-    position: absolute;
-    top: -10%;
-    right: -5%;
-    width: 60%;
-    height: 60%;
-    background: radial-gradient(
-        circle,
-        rgba(234, 88, 12, 0.08) 0%,
-        rgba(234, 88, 12, 0) 70%
-    );
-    border-radius: 50%;
-    z-index: 1;
-}
-
 /* =============================================
    TABLET (768px+)
    ============================================= */
@@ -276,6 +266,7 @@
         color: var(--color-text-tertiary);
         letter-spacing: 0.15em;
         text-transform: uppercase;
+        transition: color 0.3s ease;
     }
 }
 
@@ -294,6 +285,7 @@
     
     .hero-subtitle {
         font-size: 1.125rem;
+        margin-bottom: var(--spacing-xl);
     }
     
     .hero-actions {
@@ -308,12 +300,6 @@
     
     .link-secondary {
         margin-top: var(--spacing-sm);
-    }
-
-    .bg-glow {
-        width: 80%;
-        height: 80%;
-        opacity: 0.5;
     }
 }
 

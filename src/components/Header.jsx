@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import AnimatedThemeToggler from './ui/animated-theme-toggler';
+import { useTheme } from '../contexts/ThemeContext';
 import "./Header.css";
 
 const Header = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [logoRotated, setLogoRotated] = useState(false); // Toggle fixo do click
+    const { theme, toggleTheme } = useTheme();
 
     const toggleMenu = () => setMenuOpen(!menuOpen);
     const closeMenu = () => setMenuOpen(false);
@@ -26,6 +30,10 @@ const Header = () => {
     ];
 
     const scrollToTop = () => {
+        // Toggle fixo da rotação
+        setLogoRotated(!logoRotated);
+        
+        // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
         closeMenu();
     };
@@ -53,7 +61,7 @@ const Header = () => {
                         onClick={scrollToTop}
                         aria-label="Go to top"
                     >
-                        <span className="logo-mark">V</span>
+                        <span className={`logo-mark ${logoRotated ? 'rotated' : ''}`}>V</span>
                     </button>
 
                     <nav className="desktop-nav">
@@ -68,6 +76,7 @@ const Header = () => {
                                 <span className="nav-label">{link.label}</span>
                             </a>
                         ))}
+                        <AnimatedThemeToggler theme={theme} onToggle={toggleTheme} />
                     </nav>
 
                     <button
@@ -103,6 +112,14 @@ const Header = () => {
                                         <span className="nav-label">{link.label}</span>
                                     </motion.a>
                                 ))}
+                                <div style={{ 
+                                    display: 'flex', 
+                                    justifyContent: 'center', 
+                                    paddingTop: 'var(--spacing-lg)',
+                                    borderTop: '1px solid var(--border-light)'
+                                }}>
+                                    <AnimatedThemeToggler theme={theme} onToggle={toggleTheme} />
+                                </div>
                             </nav>
                         </motion.div>
                     )}

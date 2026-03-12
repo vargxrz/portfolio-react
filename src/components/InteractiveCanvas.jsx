@@ -1,14 +1,25 @@
 import React, { useEffect } from 'react';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { useTheme } from '../contexts/ThemeContext';
 import './InteractiveCanvas.css';
 
 const InteractiveCanvas = () => {
+    const { theme } = useTheme();
     const mouseX = useMotionValue(0.5);
     const mouseY = useMotionValue(0.5);
     
     // Transform mouse position para gradient position
     const gradientX = useTransform(mouseX, [0, 1], [20, 80]);
     const gradientY = useTransform(mouseY, [0, 1], [20, 80]);
+    
+    // Cores baseadas no tema
+    const accentColor = theme === 'dark' 
+        ? 'rgba(168, 85, 247, 0.15)' 
+        : 'rgba(234, 88, 12, 0.15)';
+    
+    const secondaryColor = theme === 'dark'
+        ? 'rgba(168, 85, 247, 0.08)'
+        : 'rgba(168, 162, 158, 0.1)';
 
     useEffect(() => {
         const handleMouseMove = (e) => {
@@ -45,13 +56,13 @@ const InteractiveCanvas = () => {
                     </filter>
                     
                     <radialGradient id="grad1" cx="50%" cy="50%">
-                        <stop offset="0%" stopColor="rgba(234, 88, 12, 0.15)" />
-                        <stop offset="100%" stopColor="rgba(234, 88, 12, 0)" />
+                        <stop offset="0%" stopColor={accentColor} />
+                        <stop offset="100%" stopColor="transparent" />
                     </radialGradient>
                     
                     <radialGradient id="grad2" cx="50%" cy="50%">
-                        <stop offset="0%" stopColor="rgba(168, 162, 158, 0.1)" />
-                        <stop offset="100%" stopColor="rgba(168, 162, 158, 0)" />
+                        <stop offset="0%" stopColor={secondaryColor} />
+                        <stop offset="100%" stopColor="transparent" />
                     </radialGradient>
                 </defs>
                 

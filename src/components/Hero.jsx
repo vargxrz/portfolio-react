@@ -180,9 +180,6 @@ const Hero = () => {
                 
                 {/* Noise texture sutil */}
                 <div className="bg-noise"></div>
-                
-                {/* 1 gradient glow fixo (não pulsando) */}
-                <div className="bg-glow"></div>
             </div>
         </section>
     );
