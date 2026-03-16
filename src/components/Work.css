@@ -18,7 +18,7 @@
 
 .work-header {
     text-align: center;
-    margin-bottom: var(--spacing-4xl);
+    margin-bottom: var(--spacing-2xl);
     max-width: 900px;
     margin-left: auto;
     margin-right: auto;
@@ -269,4 +269,143 @@
         transform: none;
         box-shadow: none;
     }
+}
+
+/* =============================================
+   NOVO LAYOUT BENTO — Grid Assimétrico
+   ============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&display=swap');
+
+/* Grid bento assimétrico */
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 12px;
+}
+
+.bento-card-1 { grid-column: span 6; }
+.bento-card-2 { grid-column: span 6; }
+.bento-card-3 { grid-column: span 5; }
+.bento-card-4 { grid-column: span 7; }
+
+/* Card base */
+.work-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+
+  /* COR DO CARD: ajuste aqui para o tom escuro do seu tema */
+  background: var(--color-surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.work-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Linha do topo: label + número lado a lado */
+.card-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0;
+}
+
+/* Label de categoria */
+.card-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+/* Número decorativo — grande, à direita, mesmo tom do fundo */
+.card-number {
+  font-family: 'DM Serif Display', serif;
+  font-size: 72px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.1);
+  user-select: none;
+  pointer-events: none;
+  transition: color 0.2s ease;
+  margin-top: -8px; /* sobe para alinhar visualmente com o label */
+}
+
+.work-card:hover .card-number {
+  color: rgba(255, 255, 255, 0.18);
+}
+
+/* Divisor */
+.card-divider {
+  width: 28px;
+  height: 1.5px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 1rem 0 1.25rem;
+}
+
+/* Título */
+.card-title {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--color-text-primary);
+  margin: 0 0 0.75rem;
+}
+
+/* Descrição */
+.card-description {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+  margin: 0 0 1.5rem;
+  flex: 1;
+}
+
+/* Tags */
+.card-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.tech-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--color-text-secondary);
+  background: transparent;
+  letter-spacing: 0.04em;
+}
+
+/* Mobile — coluna única */
+@media (max-width: 640px) {
+  .work-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bento-card-1,
+  .bento-card-2,
+  .bento-card-3,
+  .bento-card-4 {
+    grid-column: span 1;
+  }
+
+  .card-number {
+    font-size: 48px;
+  }
 }

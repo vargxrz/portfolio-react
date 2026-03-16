@@ -10,6 +10,7 @@ const Work = () => {
 
     const projects = [
         {
+            number: "01",
             title: "Virtual Menu",
             description: "A responsive virtual menu built with HTML, CSS, and JavaScript for restaurants. Features modern design and smooth animations.",
             tech: ["HTML", "CSS", "JavaScript"],
@@ -21,6 +22,7 @@ const Work = () => {
             category: "Frontend"
         },
         {
+            number: "02",
             title: "ZIP Code Finder",
             description: "React application to search addresses by ZIP code using public APIs. Clean interface with real-time validation.",
             tech: ["React", "JavaScript", "API Integration"],
@@ -32,6 +34,7 @@ const Work = () => {
             category: "Web App"
         },
         {
+            number: "03",
             title: "Firebase Push Notifications",
             description: "Java backend POC integrated with Firebase for managing and sending push notifications to mobile applications.",
             tech: ["Java", "Firebase", "Spring Boot"],
@@ -43,6 +46,7 @@ const Work = () => {
             category: "Backend"
         },
         {
+            number: "04",
             title: "CRUD with Spring Boot",
             description: "Complete Java backend project with Spring Boot featuring REST APIs, JPA for data persistence, and CRUD operations.",
             tech: ["Java", "Spring Boot", "JPA", "PostgreSQL"],
@@ -64,19 +68,24 @@ const Work = () => {
                 href={cardLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`work-card ${project.featured ? 'work-card--featured' : ''}`}
+                className={`work-card bento-card-${index + 1}`}
                 initial={{ opacity: 0, y: 30 }}
                 animate={isVisible ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
             >
+                <div className="card-top-row">
+                    <p className="card-label mono">{project.category}</p>
+                    <span className="card-number">{project.number}</span>
+                </div>
+
+                <div className="card-divider" />
+
                 <h3 className="card-title">{project.title}</h3>
                 <p className="card-description">{project.description}</p>
-                
+
                 <div className="card-tech">
-                    {project.tech.map((tech, techIndex) => (
-                        <span key={techIndex} className="tech-tag mono">
-                            {tech}
-                        </span>
+                    {project.tech.map((tech, i) => (
+                        <span key={i} className="tech-tag mono">{tech}</span>
                     ))}
                 </div>
             </motion.a>
