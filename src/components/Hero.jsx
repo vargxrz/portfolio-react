@@ -40,8 +40,8 @@ const Hero = () => {
 
     const downloadCV = () => {
         const link = document.createElement('a');
-        link.href = '/assets/CurriculoVargas.pdf';
-        link.download = 'curriculo-vargas.pdf';
+        link.href = '/assets/CurriculoVargas2026.pdf';
+        link.download = 'curriculo-vargas-2026.pdf';
         link.click();
     };
 
@@ -148,7 +148,7 @@ const Hero = () => {
                                 <ArrowRight size={18} strokeWidth={2} />
                             </motion.button>
                             <motion.a 
-                                href="/assets/CurriculoVargas.pdf"
+                                href="/assets/CurriculoVargas2026.pdf"
                                 download="curriculo-vargas.pdf"
                                 className="link-secondary"
                                 whileHover={{ x: 4 }}
