@@ -10,9 +10,8 @@
     align-items: center;
     justify-content: center;
     padding: var(--spacing-6xl) var(--spacing-xl);
-    background: var(--color-primary);
+    background: transparent;
     overflow: hidden;
-    transition: background-color 0.3s ease;
 }
 
 .hero-grid {

@@ -7,9 +7,8 @@
     position: relative;
     min-height: 100vh;
     padding: var(--spacing-4xl) 0 var(--spacing-3xl);
-    background: var(--color-primary);
+    background: transparent;
     overflow: hidden;
-    transition: background-color 0.3s ease;
 }
 
 /* =============================================

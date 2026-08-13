@@ -2,8 +2,6 @@ import React, { useEffect } from 'react';
 import { motion, useMotionValue, useTransform, useReducedMotion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import useIsMobile from '../hooks/useIsMobile';
-import InteractiveCanvas from './InteractiveCanvas';
-import ThreeBackground from './ThreeBackground';
 import './Hero.css';
 
 const Hero = () => {
@@ -177,7 +175,7 @@ const Hero = () => {
             {/* Background Elements */}
             <div className="hero-bg">
                 {/* Elemento interativo principal */}
-                {!isMobile && <ThreeBackground />}
+                {/* 3D particle spheres rendered globally in App */}
                 
                 {/* Noise texture sutil */}
                 <div className="bg-noise"></div>
