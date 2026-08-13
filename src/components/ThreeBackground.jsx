@@ -7,24 +7,26 @@ import './ThreeBackground.css';
 const LIGHT_COLOR = new THREE.Color(0xEA580C);
 const DARK_COLOR = new THREE.Color(0xA855F7);
 
-const PARTICLE_COUNT = 1800;
+const PARTICLE_COUNT = 1600;
+const INNER_RADIUS = 1.9;
+const OUTER_RADIUS = 3.3;
 
-const buildCloudGeometry = () => {
+const buildRingGeometry = () => {
     const positions = new Float32Array(PARTICLE_COUNT * 3);
     const randoms = new Float32Array(PARTICLE_COUNT);
     const seeds = new Float32Array(PARTICLE_COUNT * 3);
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
-        // Distribute in a wide oblate disc — dense at center, thinning outward.
-        // Uses inverse-CDF trick: radius proportional to sqrt(rand) gives uniform disc density.
+        // Annular (donut) distribution: particles occupy a band around center,
+        // leaving the middle empty so the hero title stays clear.
         const angle = Math.random() * Math.PI * 2;
-        const rBase = Math.sqrt(Math.random());
-        const radius = rBase * 3.2; // horizontal extent
+        const rBase = Math.sqrt(Math.random()); // uniform density within the band
+        const radius = INNER_RADIUS + rBase * (OUTER_RADIUS - INNER_RADIUS);
 
-        // Softly elliptical: wider than tall so cloud frames the viewport
-        const x = Math.cos(angle) * radius * 1.15;
-        const y = Math.sin(angle) * radius * 0.7;
-        const z = (Math.random() - 0.5) * 1.4;
+        // Elliptical: slightly wider than tall to match viewport aspect
+        const x = Math.cos(angle) * radius * 1.2;
+        const y = Math.sin(angle) * radius * 0.75;
+        const z = (Math.random() - 0.5) * 1.2;
 
         positions[i * 3] = x;
         positions[i * 3 + 1] = y;
@@ -71,13 +73,11 @@ const ThreeBackground = () => {
 
         const initialColor = themeRef.current === 'dark' ? DARK_COLOR : LIGHT_COLOR;
 
-        const geometry = buildCloudGeometry();
+        const geometry = buildRingGeometry();
         const uniforms = {
             uTime: { value: 0 },
             uSize: { value: 1.8 },
             uDispersion: { value: 0 },
-            uSwirl: { value: 0 },
-            uTurbulence: { value: 0 },
             uMouse: { value: new THREE.Vector2(-10, -10) },
             uMouseStrength: { value: 0.7 },
             uColor: { value: initialColor.clone() },
@@ -107,15 +107,15 @@ const ThreeBackground = () => {
         resizeObserver.observe(container);
 
         // --- SCROLL ---
-        // Animation range: 0 → position where Contact section starts entering view.
-        // Recomputed each scroll so it stays accurate as layout changes.
+        // Animation range spans almost the entire scrollable distance up to just
+        // before the Contact section — gives the animation a slow, patient feel.
         let scrollProgress = 0;
         const handleScroll = () => {
             const contact = document.getElementById('contact');
-            let range = window.innerHeight * 2.5;
+            let range = window.innerHeight * 3.0;
             if (contact) {
                 const contactTop = contact.getBoundingClientRect().top + window.scrollY;
-                range = Math.max(contactTop - window.innerHeight * 0.4, window.innerHeight * 0.8);
+                range = Math.max(contactTop - window.innerHeight * 0.15, window.innerHeight);
             }
             scrollProgress = Math.min(Math.max(window.scrollY / range, 0), 1);
         };
@@ -142,26 +142,19 @@ const ThreeBackground = () => {
             const p = scrollProgress;
             const eased = easeInOut(p);
 
-            // Scroll-driven behaviour:
-            //   Hero (p=0)   : cloud slightly expanded, gentle ambient
-            //   Middle (p=0.5): swirl and dispersion pick up, cloud rotates/expands
-            //   Approaching Contact (p→1): particles fade to zero, no lingering
-            uniforms.uDispersion.value = eased * 1.4;
-            uniforms.uSwirl.value = elapsed * 0.03 + eased * 1.8;
-            uniforms.uTurbulence.value = eased * 0.35;
+            // Dispersion is the whole scroll story:
+            //   p = 0 : particles sit in the ring around the title (no push)
+            //   p ↑   : each particle is pushed outward, ring expands, particles thin
+            uniforms.uDispersion.value = eased * 2.0;
 
-            // Cloud tilts slightly on scroll for depth
-            cloud.rotation.z = eased * 0.25;
-            cloud.rotation.x = -0.1 + Math.sin(elapsed * 0.15) * 0.05;
+            // Very slow ambient rotation for depth (independent of scroll)
+            cloud.rotation.z = elapsed * 0.02;
 
-            // Vertical drift so cloud feels alive
-            cloud.position.y = Math.sin(elapsed * 0.2) * 0.15;
+            // Opacity: full through Hero + Work, fades before Contact enters view
+            const fadeOut = 1 - easeInOut(Math.min(Math.max((p - 0.65) / 0.35, 0), 1));
+            uniforms.uOpacity.value = fadeOut * 0.5;
 
-            // Opacity: full early, fades to zero before Contact
-            const fadeOut = 1 - easeInOut(Math.min(Math.max((p - 0.6) / 0.4, 0), 1));
-            uniforms.uOpacity.value = fadeOut * 0.55;
-
-            // Mouse — smooth lerp toward cursor
+            // Mouse — smooth lerp toward cursor position
             uniforms.uMouse.value.x += (targetMouse.x - uniforms.uMouse.value.x) * 0.12;
             uniforms.uMouse.value.y += (targetMouse.y - uniforms.uMouse.value.y) * 0.12;
 
