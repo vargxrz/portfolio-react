@@ -78,8 +78,8 @@ const ThreeBackground = () => {
             uTime: { value: 0 },
             uSize: { value: 1.8 },
             uDispersion: { value: 0 },
-            uMouse: { value: new THREE.Vector2(-10, -10) },
-            uMouseStrength: { value: 0.7 },
+            uMouse: { value: new THREE.Vector2(0, 0) },
+            uMouseStrength: { value: 0 },
             uColor: { value: initialColor.clone() },
             uOpacity: { value: 0.55 },
         };
@@ -122,13 +122,19 @@ const ThreeBackground = () => {
         handleScroll();
 
         // --- MOUSE ---
-        const targetMouse = new THREE.Vector2(-10, -10);
+        // targetMouse tracks last known cursor position (stays even after leave).
+        // mouseActiveTarget/mouseActive fades the effect in/out on enter/leave
+        // so particles smoothly relax instead of snapping when cursor leaves.
+        const targetMouse = new THREE.Vector2(0, 0);
+        let mouseActiveTarget = 0;
+        let mouseActive = 0;
         const handleMouseMove = (e) => {
             targetMouse.x = (e.clientX / window.innerWidth) * 2 - 1;
             targetMouse.y = -((e.clientY / window.innerHeight) * 2 - 1);
+            mouseActiveTarget = 1;
         };
         const handleMouseLeave = () => {
-            targetMouse.set(-10, -10);
+            mouseActiveTarget = 0;
         };
 
         // --- ANIMATION ---
@@ -155,8 +161,12 @@ const ThreeBackground = () => {
             uniforms.uOpacity.value = fadeOut * 0.5;
 
             // Mouse — smooth lerp toward cursor position
-            uniforms.uMouse.value.x += (targetMouse.x - uniforms.uMouse.value.x) * 0.12;
-            uniforms.uMouse.value.y += (targetMouse.y - uniforms.uMouse.value.y) * 0.12;
+            uniforms.uMouse.value.x += (targetMouse.x - uniforms.uMouse.value.x) * 0.09;
+            uniforms.uMouse.value.y += (targetMouse.y - uniforms.uMouse.value.y) * 0.09;
+
+            // Ease strength up on hover, ease down on leave — no snap
+            mouseActive += (mouseActiveTarget - mouseActive) * 0.06;
+            uniforms.uMouseStrength.value = mouseActive * 0.55;
 
             // Theme lerp
             const targetColor = themeRef.current === 'dark' ? DARK_COLOR : LIGHT_COLOR;

@@ -30,11 +30,16 @@ export const sphereVertexShader = /* glsl */ `
         // World position (needed so mouse repulsion applies in world space)
         vec4 worldPos = modelMatrix * vec4(pos, 1.0);
 
-        // Mouse repulsion — cursor pushes nearby particles away
+        // Mouse repulsion — cursor pushes nearby particles away.
+        // Radius stays small so the effect feels localized, not chaotic.
+        // Quadratic falloff = crisp near, gentle at edges.
         vec2 mouseWorld = uMouse * 3.5;
         vec2 toMouse = worldPos.xy - mouseWorld;
         float mDist = length(toMouse);
-        float force = smoothstep(1.8, 0.0, mDist) * uMouseStrength;
+        float radius = 1.3;
+        float falloff = 1.0 - clamp(mDist / radius, 0.0, 1.0);
+        falloff = falloff * falloff;
+        float force = falloff * uMouseStrength * (0.55 + aRandom * 0.45);
         worldPos.xy += normalize(toMouse + vec2(0.001)) * force;
 
         vec4 mvPosition = viewMatrix * worldPos;
