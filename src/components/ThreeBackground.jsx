@@ -164,13 +164,16 @@ const ThreeBackground = () => {
             const sep = 8 - slide * 6.1;
             const finalSep = sep * (1 - merge);
 
+            // Merge target rises above viewport center so cards don't cover it
+            const mergeY = merge * 0.9;
+
             // Vertical drift for elegance
             const drift = Math.sin(elapsed * 0.3) * 0.15;
-            leftSphere.position.set(-finalSep, drift, 0);
-            rightSphere.position.set(finalSep, -drift, 0);
+            leftSphere.position.set(-finalSep, drift + mergeY, 0);
+            rightSphere.position.set(finalSep, -drift + mergeY, 0);
 
-            // Dispersion expands dramatically at merge point (explosion outward)
-            const dispersion = merge * 1.6;
+            // Dispersion pushes particles outward subtly at merge (breathing)
+            const dispersion = merge * 0.6;
             leftUniforms.uDispersion.value = dispersion;
             rightUniforms.uDispersion.value = dispersion;
 
