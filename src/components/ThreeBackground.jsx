@@ -54,11 +54,22 @@ const ThreeBackground = () => {
         const resizeObserver = new ResizeObserver(resize);
         resizeObserver.observe(container);
 
+        const targetMouse = new THREE.Vector2(0, 0);
+        const handleMouseMove = (e) => {
+            targetMouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            targetMouse.y = -((e.clientY / window.innerHeight) * 2 - 1);
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+
         const clock = new THREE.Clock();
         let rafId;
 
         const render = () => {
             uniforms.uTime.value = clock.getElapsedTime();
+
+            uniforms.uMouse.value.x += (targetMouse.x - uniforms.uMouse.value.x) * 0.05;
+            uniforms.uMouse.value.y += (targetMouse.y - uniforms.uMouse.value.y) * 0.05;
+
             renderer.render(scene, camera);
             rafId = requestAnimationFrame(render);
         };
@@ -66,6 +77,7 @@ const ThreeBackground = () => {
 
         return () => {
             cancelAnimationFrame(rafId);
+            window.removeEventListener('mousemove', handleMouseMove);
             resizeObserver.disconnect();
             geometry.dispose();
             material.dispose();
