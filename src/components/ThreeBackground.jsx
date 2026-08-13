@@ -7,31 +7,28 @@ import './ThreeBackground.css';
 const LIGHT_COLOR = new THREE.Color(0xEA580C);
 const DARK_COLOR = new THREE.Color(0xA855F7);
 
-const PARTICLE_COUNT = 900;
-const SPHERE_RADIUS = 1.3;
+const PARTICLE_COUNT = 1800;
 
-const buildSphereGeometry = () => {
+const buildCloudGeometry = () => {
     const positions = new Float32Array(PARTICLE_COUNT * 3);
     const randoms = new Float32Array(PARTICLE_COUNT);
     const seeds = new Float32Array(PARTICLE_COUNT * 3);
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
-        // Golden-spiral distribution for even sphere coverage
-        const y = 1 - (i / (PARTICLE_COUNT - 1)) * 2;
-        const r = Math.sqrt(1 - y * y);
-        const theta = Math.PI * (1 + Math.sqrt(5)) * i;
-        const x = Math.cos(theta) * r;
-        const z = Math.sin(theta) * r;
+        // Distribute in a wide oblate disc — dense at center, thinning outward.
+        // Uses inverse-CDF trick: radius proportional to sqrt(rand) gives uniform disc density.
+        const angle = Math.random() * Math.PI * 2;
+        const rBase = Math.sqrt(Math.random());
+        const radius = rBase * 3.2; // horizontal extent
 
-        // Add radial jitter — the "crumbled" look
-        const jitter = 0.08;
-        const jx = (Math.random() - 0.5) * jitter;
-        const jy = (Math.random() - 0.5) * jitter;
-        const jz = (Math.random() - 0.5) * jitter;
+        // Softly elliptical: wider than tall so cloud frames the viewport
+        const x = Math.cos(angle) * radius * 1.15;
+        const y = Math.sin(angle) * radius * 0.7;
+        const z = (Math.random() - 0.5) * 1.4;
 
-        positions[i * 3] = x * SPHERE_RADIUS + jx;
-        positions[i * 3 + 1] = y * SPHERE_RADIUS + jy;
-        positions[i * 3 + 2] = z * SPHERE_RADIUS + jz;
+        positions[i * 3] = x;
+        positions[i * 3 + 1] = y;
+        positions[i * 3 + 2] = z;
 
         randoms[i] = Math.random();
         seeds[i * 3] = Math.random();
@@ -45,6 +42,8 @@ const buildSphereGeometry = () => {
     geometry.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 3));
     return geometry;
 };
+
+const easeInOut = (t) => t * t * (3 - 2 * t);
 
 const ThreeBackground = () => {
     const containerRef = useRef(null);
@@ -72,45 +71,28 @@ const ThreeBackground = () => {
 
         const initialColor = themeRef.current === 'dark' ? DARK_COLOR : LIGHT_COLOR;
 
-        // --- LEFT SPHERE ---
-        const leftGeometry = buildSphereGeometry();
-        const leftUniforms = {
+        const geometry = buildCloudGeometry();
+        const uniforms = {
             uTime: { value: 0 },
-            uSize: { value: 1.7 },
+            uSize: { value: 1.8 },
             uDispersion: { value: 0 },
+            uSwirl: { value: 0 },
+            uTurbulence: { value: 0 },
+            uMouse: { value: new THREE.Vector2(-10, -10) },
+            uMouseStrength: { value: 0.7 },
             uColor: { value: initialColor.clone() },
             uOpacity: { value: 0.55 },
         };
-        const leftMaterial = new THREE.ShaderMaterial({
+        const material = new THREE.ShaderMaterial({
             vertexShader: sphereVertexShader,
             fragmentShader: sphereFragmentShader,
-            uniforms: leftUniforms,
+            uniforms,
             transparent: true,
             depthWrite: false,
             blending: THREE.NormalBlending,
         });
-        const leftSphere = new THREE.Points(leftGeometry, leftMaterial);
-        scene.add(leftSphere);
-
-        // --- RIGHT SPHERE ---
-        const rightGeometry = buildSphereGeometry();
-        const rightUniforms = {
-            uTime: { value: 0 },
-            uSize: { value: 1.7 },
-            uDispersion: { value: 0 },
-            uColor: { value: initialColor.clone() },
-            uOpacity: { value: 0.55 },
-        };
-        const rightMaterial = new THREE.ShaderMaterial({
-            vertexShader: sphereVertexShader,
-            fragmentShader: sphereFragmentShader,
-            uniforms: rightUniforms,
-            transparent: true,
-            depthWrite: false,
-            blending: THREE.NormalBlending,
-        });
-        const rightSphere = new THREE.Points(rightGeometry, rightMaterial);
-        scene.add(rightSphere);
+        const cloud = new THREE.Points(geometry, material);
+        scene.add(cloud);
 
         // --- RESIZE ---
         const resize = () => {
@@ -125,62 +107,67 @@ const ThreeBackground = () => {
         resizeObserver.observe(container);
 
         // --- SCROLL ---
+        // Animation range: 0 → position where Contact section starts entering view.
+        // Recomputed each scroll so it stays accurate as layout changes.
         let scrollProgress = 0;
         const handleScroll = () => {
-            // Slower scroll response: animation spans 2.8 viewport heights
-            const total = window.innerHeight * 2.8;
-            scrollProgress = Math.min(Math.max(window.scrollY / total, 0), 1);
+            const contact = document.getElementById('contact');
+            let range = window.innerHeight * 2.5;
+            if (contact) {
+                const contactTop = contact.getBoundingClientRect().top + window.scrollY;
+                range = Math.max(contactTop - window.innerHeight * 0.4, window.innerHeight * 0.8);
+            }
+            scrollProgress = Math.min(Math.max(window.scrollY / range, 0), 1);
         };
         handleScroll();
+
+        // --- MOUSE ---
+        const targetMouse = new THREE.Vector2(-10, -10);
+        const handleMouseMove = (e) => {
+            targetMouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            targetMouse.y = -((e.clientY / window.innerHeight) * 2 - 1);
+        };
+        const handleMouseLeave = () => {
+            targetMouse.set(-10, -10);
+        };
 
         // --- ANIMATION ---
         const startTime = performance.now();
         let rafId;
 
-        const easeInOut = (t) => t * t * (3 - 2 * t);
-
         const render = () => {
             const elapsed = (performance.now() - startTime) * 0.001;
+            uniforms.uTime.value = elapsed;
 
-            leftUniforms.uTime.value = elapsed;
-            rightUniforms.uTime.value = elapsed;
-
-            // --- SCROLL PHASES ---
-            // p 0.00 : merged crumbled behind Hero title
-            // p 0.00–0.65 : slowly separating, dispersing outward
-            // p 0.65–1.00 : max spread, particles scattered across screen, fading
             const p = scrollProgress;
             const eased = easeInOut(p);
 
-            // Separation: 0 (merged) to ±3.8 (spread across screen)
-            const sep = eased * 3.8;
+            // Scroll-driven behaviour:
+            //   Hero (p=0)   : cloud slightly expanded, gentle ambient
+            //   Middle (p=0.5): swirl and dispersion pick up, cloud rotates/expands
+            //   Approaching Contact (p→1): particles fade to zero, no lingering
+            uniforms.uDispersion.value = eased * 1.4;
+            uniforms.uSwirl.value = elapsed * 0.03 + eased * 1.8;
+            uniforms.uTurbulence.value = eased * 0.35;
 
-            // Dispersion: subtle crumbled (0.2) at rest, grows to 1.3 (scattered farelo)
-            const dispersion = 0.2 + eased * 1.1;
-            leftUniforms.uDispersion.value = dispersion;
-            rightUniforms.uDispersion.value = dispersion;
+            // Cloud tilts slightly on scroll for depth
+            cloud.rotation.z = eased * 0.25;
+            cloud.rotation.x = -0.1 + Math.sin(elapsed * 0.15) * 0.05;
 
-            // Opacity: full early, fades as they spread thin
-            const fadeOut = 1 - easeInOut(Math.min(Math.max((p - 0.55) / 0.45, 0), 1)) * 0.75;
-            leftUniforms.uOpacity.value = fadeOut * 0.5;
-            rightUniforms.uOpacity.value = fadeOut * 0.5;
+            // Vertical drift so cloud feels alive
+            cloud.position.y = Math.sin(elapsed * 0.2) * 0.15;
 
-            // Vertical drift for elegance
-            const drift = Math.sin(elapsed * 0.3) * 0.15;
-            leftSphere.position.set(-sep, drift, 0);
-            rightSphere.position.set(sep, -drift, 0);
+            // Opacity: full early, fades to zero before Contact
+            const fadeOut = 1 - easeInOut(Math.min(Math.max((p - 0.6) / 0.4, 0), 1));
+            uniforms.uOpacity.value = fadeOut * 0.55;
 
-            // Slow continuous rotation
-            const rot = elapsed * 0.12;
-            leftSphere.rotation.y = rot;
-            leftSphere.rotation.x = rot * 0.3;
-            rightSphere.rotation.y = -rot;
-            rightSphere.rotation.x = -rot * 0.3;
+            // Mouse — smooth lerp toward cursor
+            uniforms.uMouse.value.x += (targetMouse.x - uniforms.uMouse.value.x) * 0.12;
+            uniforms.uMouse.value.y += (targetMouse.y - uniforms.uMouse.value.y) * 0.12;
 
             // Theme lerp
             const targetColor = themeRef.current === 'dark' ? DARK_COLOR : LIGHT_COLOR;
-            leftUniforms.uColor.value.lerp(targetColor, 0.08);
-            rightUniforms.uColor.value.lerp(targetColor, 0.08);
+            uniforms.uColor.value.lerp(targetColor, 0.08);
 
             renderer.render(scene, camera);
             rafId = requestAnimationFrame(render);
@@ -190,17 +177,19 @@ const ThreeBackground = () => {
             renderer.render(scene, camera);
         } else {
             window.addEventListener('scroll', handleScroll, { passive: true });
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseleave', handleMouseLeave);
             rafId = requestAnimationFrame(render);
         }
 
         return () => {
             if (rafId) cancelAnimationFrame(rafId);
             window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseleave', handleMouseLeave);
             resizeObserver.disconnect();
-            leftGeometry.dispose();
-            rightGeometry.dispose();
-            leftMaterial.dispose();
-            rightMaterial.dispose();
+            geometry.dispose();
+            material.dispose();
             renderer.dispose();
             if (renderer.domElement.parentNode) {
                 renderer.domElement.parentNode.removeChild(renderer.domElement);
