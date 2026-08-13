@@ -137,8 +137,8 @@ const Hero = () => {
 
                         {/* CTA simplificado - apenas 1 principal */}
                         <motion.div variants={itemVariants} className="hero-actions">
-                            <motion.button 
-                                className="btn-primary-minimal" 
+                            <motion.button
+                                className="btn-primary-minimal"
                                 onClick={scrollToWork}
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
@@ -146,7 +146,7 @@ const Hero = () => {
                                 <span>View work</span>
                                 <ArrowRight size={18} strokeWidth={2} />
                             </motion.button>
-                            <motion.a 
+                            <motion.a
                                 href="/assets/CurriculoVargas2026.pdf"
                                 download="curriculo-vargas.pdf"
                                 className="link-secondary"
@@ -155,28 +155,46 @@ const Hero = () => {
                                 Download CV →
                             </motion.a>
                         </motion.div>
+
+                        {/* Mobile-only marquee — scrolling skill strip */}
+                        {isMobile && (
+                            <motion.div
+                                className="hero-marquee"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 1.4, duration: 0.6 }}
+                                aria-hidden="true"
+                            >
+                                <div className="marquee-track">
+                                    {Array.from({ length: 2 }).map((_, i) => (
+                                        <div className="marquee-group" key={i}>
+                                            <span className="marquee-item">React</span>
+                                            <span className="marquee-dot">●</span>
+                                            <span className="marquee-item">TypeScript</span>
+                                            <span className="marquee-dot">●</span>
+                                            <span className="marquee-item">Node.js</span>
+                                            <span className="marquee-dot">●</span>
+                                            <span className="marquee-item">Java</span>
+                                            <span className="marquee-dot">●</span>
+                                            <span className="marquee-item">Spring Boot</span>
+                                            <span className="marquee-dot">●</span>
+                                            <span className="marquee-item">UI / UX</span>
+                                            <span className="marquee-dot">●</span>
+                                            <span className="marquee-item">Design Systems</span>
+                                            <span className="marquee-dot">●</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        )}
+
                     </div>
                 </motion.div>
 
-                {/* Scroll Indicator */}
-                {!isMobile && (
-                    <motion.div 
-                        className="scroll-indicator"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1.2, duration: 0.6 }}
-                    >
-                        <div className="scroll-line"></div>
-                        <span className="scroll-text mono">scroll</span>
-                    </motion.div>
-                )}
             </div>
 
             {/* Background Elements */}
             <div className="hero-bg">
-                {/* Elemento interativo principal */}
-                {/* 3D particle spheres rendered globally in App */}
-                
                 {/* Noise texture sutil */}
                 <div className="bg-noise"></div>
             </div>

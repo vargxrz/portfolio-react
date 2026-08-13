@@ -7,25 +7,29 @@ import './ThreeBackground.css';
 const LIGHT_COLOR = new THREE.Color(0xEA580C);
 const DARK_COLOR = new THREE.Color(0xA855F7);
 
-const PARTICLE_COUNT = 1600;
-const INNER_RADIUS = 2.0;
-const OUTER_RADIUS = 3.8;
+const PARTICLE_COUNT_DESKTOP = 1600;
+const PARTICLE_COUNT_MOBILE = 700;
 
-const buildRingGeometry = () => {
-    const positions = new Float32Array(PARTICLE_COUNT * 3);
-    const randoms = new Float32Array(PARTICLE_COUNT);
-    const seeds = new Float32Array(PARTICLE_COUNT * 3);
+// Ring dimensions per viewport. Mobile is narrower & taller (portrait),
+// so we tighten the ring and switch the ellipse ratio so particles hug
+// the title area instead of hiding at the screen edges.
+const RING_DESKTOP = { inner: 2.0, outer: 5.0, xScale: 1.35, yScale: 0.85 };
+const RING_MOBILE = { inner: 1.1, outer: 2.4, xScale: 0.95, yScale: 1.15 };
 
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
+const buildRingGeometry = (count, ring) => {
+    const positions = new Float32Array(count * 3);
+    const randoms = new Float32Array(count);
+    const seeds = new Float32Array(count * 3);
+
+    for (let i = 0; i < count; i++) {
         // Annular (donut) distribution: particles occupy a band around center,
         // leaving the middle empty so the hero title stays clear.
         const angle = Math.random() * Math.PI * 2;
         const rBase = Math.sqrt(Math.random()); // uniform density within the band
-        const radius = INNER_RADIUS + rBase * (OUTER_RADIUS - INNER_RADIUS);
+        const radius = ring.inner + rBase * (ring.outer - ring.inner);
 
-        // Elliptical: slightly wider than tall to match viewport aspect
-        const x = Math.cos(angle) * radius * 1.2;
-        const y = Math.sin(angle) * radius * 0.75;
+        const x = Math.cos(angle) * radius * ring.xScale;
+        const y = Math.sin(angle) * radius * ring.yScale;
         const z = (Math.random() - 0.5) * 1.2;
 
         positions[i * 3] = x;
@@ -61,6 +65,7 @@ const ThreeBackground = () => {
         if (!container) return;
 
         const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
@@ -73,13 +78,15 @@ const ThreeBackground = () => {
 
         const initialColor = themeRef.current === 'dark' ? DARK_COLOR : LIGHT_COLOR;
 
-        const geometry = buildRingGeometry();
+        const particleCount = isMobile ? PARTICLE_COUNT_MOBILE : PARTICLE_COUNT_DESKTOP;
+        const ring = isMobile ? RING_MOBILE : RING_DESKTOP;
+        const geometry = buildRingGeometry(particleCount, ring);
         const uniforms = {
             uTime: { value: 0 },
-            uSize: { value: 1.8 },
+            uSize: { value: isMobile ? 1.4 : 1.8 },
             uDispersion: { value: 0 },
             uColor: { value: initialColor.clone() },
-            uOpacity: { value: 0.55 },
+            uOpacity: { value: isMobile ? 0.38 : 0.55 },
         };
         const material = new THREE.ShaderMaterial({
             vertexShader: sphereVertexShader,
@@ -137,14 +144,17 @@ const ThreeBackground = () => {
             // Dispersion is the whole scroll story:
             //   p = 0 : particles sit in the ring around the title (no push)
             //   p ↑   : each particle is pushed outward, ring expands, particles thin
-            uniforms.uDispersion.value = eased * 2.0;
+            // Max 4.5 pushes particles well past visible content area, keeping
+            // the center clear so Work cards aren't overlapped.
+            uniforms.uDispersion.value = eased * 4.5;
 
             // Very slow ambient rotation for depth (independent of scroll)
             cloud.rotation.z = BASE_TILT + elapsed * 0.02;
 
-            // Opacity: full through Hero + Work, fades before Contact enters view
+            // Opacity: full through Hero + Work, fades before Contact enters view.
+            // Mobile ceiling is lower so background stays clean, not polluted.
             const fadeOut = 1 - easeInOut(Math.min(Math.max((p - 0.65) / 0.35, 0), 1));
-            uniforms.uOpacity.value = fadeOut * 0.5;
+            uniforms.uOpacity.value = fadeOut * (isMobile ? 0.35 : 0.5);
 
             // Theme lerp
             const targetColor = themeRef.current === 'dark' ? DARK_COLOR : LIGHT_COLOR;

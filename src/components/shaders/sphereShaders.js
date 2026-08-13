@@ -20,9 +20,11 @@ export const sphereVertexShader = /* glsl */ `
         ) * (0.05 + aRandom * 0.05);
         pos += jitter;
 
-        // Radial dispersion — pushes each particle outward from center
+        // Radial dispersion — pushes each particle outward from center.
+        // Min factor (0.7) ensures even "lazy" particles clear the content area
+        // when scroll approaches Work section.
         vec2 outward = normalize(pos.xy + vec2(0.001));
-        pos.xy += outward * uDispersion * (0.4 + aRandom * 0.9);
+        pos.xy += outward * uDispersion * (0.7 + aRandom * 0.8);
 
         vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
         gl_Position = projectionMatrix * mvPosition;

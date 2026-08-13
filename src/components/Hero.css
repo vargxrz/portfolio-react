@@ -200,6 +200,14 @@
 }
 
 /* =============================================
+   MOBILE MARQUEE (activated in mobile media query)
+   ============================================= */
+
+.hero-marquee {
+    display: none;
+}
+
+/* =============================================
    TABLET (768px+)
    ============================================= */
 
@@ -276,30 +284,112 @@
 
 @media (max-width: 768px) {
     .hero-section {
-        padding: var(--spacing-4xl) var(--spacing-md);
+        padding: var(--spacing-2xl) var(--spacing-md);
+        overflow: hidden;
     }
-    
+
+    /* Prevent marquee's nowrap inline-flex track from forcing
+       .hero-content to expand past viewport in flex-column parent. */
+    .hero-grid,
+    .hero-content {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .hero-label {
+        margin-bottom: var(--spacing-md);
+    }
+
     .hero-heading {
-        font-size: 2.5rem;
+        font-size: clamp(1.9rem, 8.5vw, 2.4rem);
+        letter-spacing: -0.02em;
+        line-height: 1.08;
+        margin: var(--spacing-md) 0 var(--spacing-sm);
     }
-    
+
     .hero-subtitle {
-        font-size: 1.125rem;
-        margin-bottom: var(--spacing-xl);
+        font-size: 1rem;
+        margin-bottom: var(--spacing-lg);
     }
-    
+
     .hero-actions {
         flex-direction: column;
         width: 100%;
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-lg);
     }
-    
+
     .btn-primary-minimal {
         width: 100%;
         justify-content: center;
+        padding: 12px 24px;
     }
-    
+
     .link-secondary {
-        margin-top: var(--spacing-sm);
+        margin-top: var(--spacing-xs);
+    }
+
+    /* --- Skills marquee (kept — user liked it) --- */
+    .hero-marquee {
+        display: block;
+        position: relative;
+        width: 100%;
+        margin-top: var(--spacing-4xl);
+        overflow: hidden;
+        mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            #000 10%,
+            #000 90%,
+            transparent 100%
+        );
+        -webkit-mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            #000 10%,
+            #000 90%,
+            transparent 100%
+        );
+    }
+
+    .marquee-track {
+        display: inline-flex;
+        white-space: nowrap;
+        animation: marquee-scroll 32s linear infinite;
+        will-change: transform;
+    }
+
+    .marquee-group {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-md);
+        padding-right: var(--spacing-md);
+    }
+
+    .marquee-item {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--color-text-secondary);
+    }
+
+    .marquee-dot {
+        font-size: 0.3rem;
+        color: var(--color-accent);
+        opacity: 0.7;
+    }
+
+    @keyframes marquee-scroll {
+        0%   { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+        animation: none !important;
     }
 }
 

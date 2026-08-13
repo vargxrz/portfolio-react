@@ -1,6 +1,5 @@
 /* =============================================
-   WORK SECTION - Mobile First
-   Grid Uniforme com Cards Clicáveis
+   WORK SECTION - Editorial Zig-Zag
    ============================================= */
 
 .work-section {
@@ -73,134 +72,137 @@
 }
 
 /* =============================================
-   GRID DE PROJETOS
+   ROWS CONTAINER
    ============================================= */
 
-.work-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--spacing-lg);
-    margin-top: var(--spacing-5xl);
+.work-rows {
+    margin-top: var(--spacing-4xl);
+    display: flex;
+    flex-direction: column;
 }
 
 /* =============================================
-   WORK CARD - Minimalista com Bordas Sutis
+   PROJECT ROW - Mobile First (stack)
    ============================================= */
 
-.work-card {
+.proj-row {
     position: relative;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     gap: var(--spacing-md);
-    padding: var(--spacing-xl);
-    background: var(--color-surface);
-    border: 1px solid rgba(168, 162, 158, 0.2);
-    border-radius: var(--radius-lg);
+    padding: var(--spacing-2xl) 0;
+    border-bottom: 1px solid rgba(168, 162, 158, 0.12);
     text-decoration: none;
     color: inherit;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.work-card:hover {
-    transform: scale(1.02);
-    border-color: var(--color-accent);
-    box-shadow: 0 0 24px 4px rgba(234, 88, 12, 0.15);
+[data-theme="dark"] .proj-row {
+    border-bottom-color: rgba(255, 255, 255, 0.06);
 }
 
-[data-theme="dark"] .work-card {
-    border: 1px solid rgba(82, 82, 82, 0.3);
+.proj-row:last-child {
+    border-bottom: none;
 }
 
-[data-theme="dark"] .work-card:hover {
-    box-shadow: 0 0 24px 4px rgba(168, 85, 247, 0.2);
-}
-
-/* Featured - Border laranja 2px */
-.work-card--featured {
-    border: 2px solid var(--color-accent);
-}
-
-
-/* Título - Crimson Pro light */
-.card-title {
+/* Number — Crimson Pro, giant, ghost by default */
+.proj-num {
     font-family: var(--font-display);
-    font-size: clamp(24px, 3vw, 28px);
+    font-weight: 200;
+    font-size: clamp(5rem, 14vw, 8rem);
+    line-height: 0.85;
+    color: rgba(168, 162, 158, 0.25);
+    user-select: none;
+    display: block;
+    transition: color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: left center;
+}
+
+[data-theme="dark"] .proj-num {
+    color: rgba(255, 255, 255, 0.12);
+}
+
+/* Content column */
+.proj-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.proj-label {
+    font-size: var(--font-xs);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-sm);
+    transition: color 0.3s ease;
+}
+
+.proj-title {
+    font-family: var(--font-display);
     font-weight: 300;
-    line-height: 1.2;
+    font-size: clamp(1.75rem, 5vw, 2.625rem);
+    line-height: 1.05;
     color: var(--color-text-primary);
     margin: 0 0 var(--spacing-md) 0;
     transition: color 0.3s ease;
 }
 
-/* Descrição - DM Sans */
-.card-description {
-    font-family: var(--font-sans);
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--color-text-secondary);
-    margin: 0 0 var(--spacing-lg) 0;
+.proj-title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--color-accent);
     transition: color 0.3s ease;
 }
 
-/* Tech Stack Tags - Minimal */
-.card-tech {
+.proj-desc {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--spacing-lg) 0;
+    max-width: 480px;
+    transition: color 0.3s ease;
+}
+
+.proj-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-xs);
-    margin-top: auto;
+    gap: 6px;
+    margin-bottom: var(--spacing-lg);
 }
 
-.tech-tag {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.02em;
-    padding: 4px 10px;
-    background: rgba(168, 162, 158, 0.08);
-    border: 1px solid rgba(168, 162, 158, 0.12);
-    border-radius: var(--radius-sm);
+.proj-tag {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    padding: 4px 12px;
+    border: 1px solid rgba(168, 162, 158, 0.2);
+    border-radius: 100px;
     color: var(--color-text-tertiary);
-    transition: all 0.3s ease;
+    background: transparent;
+    transition: border-color 0.3s ease, color 0.3s ease;
 }
 
-[data-theme="dark"] .tech-tag {
-    background: rgba(168, 85, 247, 0.08);
-    border: 1px solid rgba(168, 85, 247, 0.2);
+[data-theme="dark"] .proj-tag {
+    border-color: rgba(255, 255, 255, 0.15);
 }
 
-/* Remover estilos antigos desnecessários */
-.featured-badge,
-.card-header,
-.card-meta,
-.card-number,
-.card-category,
-.card-footer,
-.card-cta,
-.card-links,
-.card-link,
-.card-gradient,
-.card-content {
-    display: none;
+.proj-link {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    transition: color 0.3s ease;
 }
 
-
-/* =============================================
-   TABLET (640px+)
-   ============================================= */
-
-@media (min-width: 640px) {
-    .work-header .section-description {
-        max-width: 600px;
-    }
-
-    .work-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--spacing-lg);
-    }
+.proj-link-arrow {
+    display: inline-block;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* =============================================
-   TABLET (768px+)
+   TABLET (768px+) — Zig-zag layout kicks in
    ============================================= */
 
 @media (min-width: 768px) {
@@ -209,17 +211,47 @@
         margin-bottom: var(--spacing-5xl);
     }
 
-    .work-header .heading-accent {
-        display: inline;
+    .work-rows {
+        margin-top: var(--spacing-5xl);
     }
 
-    .work-grid {
-        gap: var(--spacing-xl);
-        margin-top: var(--spacing-6xl);
+    .proj-row {
+        gap: var(--spacing-2xl);
+        padding: var(--spacing-3xl) 0;
+        align-items: center;
     }
 
-    .work-card {
-        padding: var(--spacing-2xl);
+    .proj-row--left {
+        grid-template-columns: 220px 1fr;
+    }
+
+    .proj-row--right {
+        grid-template-columns: 1fr 220px;
+    }
+
+    /* Swap the DOM order for right-side rows */
+    .proj-row--right .proj-num {
+        order: 2;
+        text-align: right;
+        transform-origin: right center;
+    }
+
+    .proj-row--right .proj-content {
+        order: 1;
+        text-align: right;
+        align-items: flex-end;
+    }
+
+    .proj-row--right .proj-desc {
+        margin-left: auto;
+    }
+
+    .proj-row--right .proj-tags {
+        justify-content: flex-end;
+    }
+
+    .proj-num {
+        font-size: clamp(7rem, 12vw, 11rem);
     }
 }
 
@@ -236,22 +268,52 @@
         max-width: 720px;
     }
 
-    .work-grid {
-        gap: var(--spacing-xl);
+    .proj-row--left {
+        grid-template-columns: 280px 1fr;
     }
 
-    .work-card {
-        padding: 40px;
+    .proj-row--right {
+        grid-template-columns: 1fr 280px;
+    }
+
+    .proj-num {
+        font-size: clamp(9rem, 11vw, 12rem);
+    }
+
+    .proj-title {
+        font-size: clamp(2.25rem, 3.5vw, 3rem);
     }
 }
 
 /* =============================================
-   LARGE DESKTOP (1280px+)
+   HOVER (Desktop only) — Number lights up
    ============================================= */
 
-@media (min-width: 1280px) {
-    .work-grid {
-        gap: var(--spacing-2xl);
+@media (hover: hover) and (min-width: 768px) {
+    .proj-row:hover .proj-num {
+        color: var(--color-accent);
+        transform: scale(1.05);
+    }
+
+    .proj-row:hover .proj-title {
+        color: var(--color-text-primary);
+    }
+
+    .proj-row:hover .proj-link {
+        color: var(--color-accent);
+    }
+
+    .proj-row:hover .proj-link-arrow {
+        transform: translateX(4px);
+    }
+
+    .proj-row:hover .proj-tag {
+        border-color: rgba(234, 88, 12, 0.4);
+        color: var(--color-text-secondary);
+    }
+
+    [data-theme="dark"] .proj-row:hover .proj-tag {
+        border-color: rgba(168, 85, 247, 0.4);
     }
 }
 
@@ -260,154 +322,19 @@
    ============================================= */
 
 @media (prefers-reduced-motion: reduce) {
-    .work-card,
-    .tech-tag {
-        transition: none;
+    .proj-num,
+    .proj-title,
+    .proj-link,
+    .proj-link-arrow,
+    .proj-tag {
+        transition: color 0.2s ease;
     }
-    
-    .work-card:hover {
+
+    .proj-row:hover .proj-num {
         transform: none;
-        box-shadow: none;
     }
-}
 
-/* =============================================
-   NOVO LAYOUT BENTO — Grid Assimétrico
-   ============================================= */
-
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&display=swap');
-
-/* Grid bento assimétrico */
-.work-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 12px;
-}
-
-.bento-card-1 { grid-column: span 6; }
-.bento-card-2 { grid-column: span 6; }
-.bento-card-3 { grid-column: span 5; }
-.bento-card-4 { grid-column: span 7; }
-
-/* Card base */
-.work-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: 1.5rem;
-  border-radius: 12px;
-  text-decoration: none;
-  color: inherit;
-  cursor: pointer;
-  overflow: hidden;
-  transition: border-color 0.2s ease, transform 0.2s ease;
-
-  /* COR DO CARD: ajuste aqui para o tom escuro do seu tema */
-  background: var(--color-surface);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.work-card:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
-}
-
-/* Linha do topo: label + número lado a lado */
-.card-top-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 0;
-}
-
-/* Label de categoria */
-.card-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-text-tertiary);
-  margin: 0;
-}
-
-/* Número decorativo — grande, à direita, mesmo tom do fundo */
-.card-number {
-  font-family: 'DM Serif Display', serif;
-  font-size: 72px;
-  line-height: 1;
-  color: rgba(255, 255, 255, 0.1);
-  user-select: none;
-  pointer-events: none;
-  transition: color 0.2s ease;
-  margin-top: -8px; /* sobe para alinhar visualmente com o label */
-}
-
-.work-card:hover .card-number {
-  color: rgba(255, 255, 255, 0.18);
-}
-
-/* Divisor */
-.card-divider {
-  width: 28px;
-  height: 1.5px;
-  background: rgba(255, 255, 255, 0.2);
-  margin: 1rem 0 1.25rem;
-}
-
-/* Título */
-.card-title {
-  font-family: var(--font-display);
-  font-size: clamp(24px, 3vw, 28px);
-  font-weight: 300;
-  line-height: 1.2;
-  color: var(--color-text-primary);
-  margin: 0 0 0.75rem;
-  transition: color 0.3s ease;
-}
-
-/* Descrição */
-.card-description {
-  font-size: 13px;
-  line-height: 1.65;
-  color: var(--color-text-secondary);
-  margin: 0 0 1.5rem;
-  flex: 1;
-}
-
-/* Tags */
-.card-tech {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: auto;
-}
-
-.tech-tag {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  padding: 4px 12px;
-  border-radius: 100px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: var(--color-text-secondary);
-  background: transparent;
-  letter-spacing: 0.04em;
-}
-
-/* Mobile — coluna única */
-@media (max-width: 640px) {
-  .work-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .bento-card-1,
-  .bento-card-2,
-  .bento-card-3,
-  .bento-card-4 {
-    grid-column: span 1;
-  }
-
-  .card-number {
-    font-size: 48px;
-  }
+    .proj-row:hover .proj-link-arrow {
+        transform: none;
+    }
 }
