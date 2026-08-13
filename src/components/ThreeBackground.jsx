@@ -154,8 +154,9 @@ const ThreeBackground = () => {
             const fadeIn = easeInOut(Math.min(p / 0.3, 1));
             const slide = easeInOut(Math.min(Math.max((p - 0.1) / 0.55, 0), 1));
             const merge = easeInOut(Math.min(Math.max((p - 0.65) / 0.35, 0), 1));
+            const fadeOut = 1 - easeInOut(Math.min(Math.max((p - 0.85) / 0.15, 0), 1));
 
-            const opacity = fadeIn;
+            const opacity = fadeIn * fadeOut;
             leftUniforms.uOpacity.value = opacity * 0.6;
             rightUniforms.uOpacity.value = opacity * 0.6;
 
