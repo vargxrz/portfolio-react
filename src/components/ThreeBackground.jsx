@@ -39,8 +39,9 @@ const ThreeBackground = () => {
             wireframe: true,
         });
 
+        const BASE_TILT = -Math.PI / 6;
         const mesh = new THREE.Mesh(geometry, material);
-        mesh.rotation.x = -Math.PI / 6;
+        mesh.rotation.x = BASE_TILT;
         scene.add(mesh);
 
         const resize = () => {
@@ -61,6 +62,13 @@ const ThreeBackground = () => {
         };
         window.addEventListener('mousemove', handleMouseMove);
 
+        let scrollProgress = 0;
+        const handleScroll = () => {
+            const heroHeight = window.innerHeight;
+            scrollProgress = Math.min(Math.max(window.scrollY / heroHeight, 0), 1);
+        };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
         const clock = new THREE.Clock();
         let rafId;
 
@@ -70,6 +78,10 @@ const ThreeBackground = () => {
             uniforms.uMouse.value.x += (targetMouse.x - uniforms.uMouse.value.x) * 0.05;
             uniforms.uMouse.value.y += (targetMouse.y - uniforms.uMouse.value.y) * 0.05;
 
+            uniforms.uAmplitude.value = 0.25 + scrollProgress * 0.5;
+            uniforms.uOpacity.value = 1 - scrollProgress;
+            mesh.rotation.x = BASE_TILT - scrollProgress * 0.8;
+
             renderer.render(scene, camera);
             rafId = requestAnimationFrame(render);
         };
@@ -78,6 +90,7 @@ const ThreeBackground = () => {
         return () => {
             cancelAnimationFrame(rafId);
             window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('scroll', handleScroll);
             resizeObserver.disconnect();
             geometry.dispose();
             material.dispose();
