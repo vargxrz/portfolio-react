@@ -3,6 +3,7 @@ import { motion, useMotionValue, useTransform, useReducedMotion } from 'framer-m
 import { ArrowRight } from 'lucide-react';
 import useIsMobile from '../hooks/useIsMobile';
 import InteractiveCanvas from './InteractiveCanvas';
+import ThreeBackground from './ThreeBackground';
 import './Hero.css';
 
 const Hero = () => {
@@ -176,7 +177,7 @@ const Hero = () => {
             {/* Background Elements */}
             <div className="hero-bg">
                 {/* Elemento interativo principal */}
-                {!isMobile && <InteractiveCanvas />}
+                {!isMobile && <ThreeBackground />}
                 
                 {/* Noise texture sutil */}
                 <div className="bg-noise"></div>
