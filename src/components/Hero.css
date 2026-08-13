@@ -1,5 +1,5 @@
 /* =============================================
-   HERO SECTION - Refined Minimalist
+   HERO SECTION - Editorial Split (desktop)
    ============================================= */
 
 .hero-section {
@@ -24,7 +24,7 @@
 }
 
 /* =============================================
-   CONTENT
+   CENTER CONTENT
    ============================================= */
 
 .hero-content {
@@ -35,7 +35,7 @@
     text-align: center;
 }
 
-/* Label com status dot */
+/* Label with status dot */
 .hero-label {
     display: inline-flex;
     align-items: center;
@@ -55,14 +55,8 @@
 }
 
 @keyframes pulse-dot {
-    0%, 100% { 
-        opacity: 1; 
-        transform: scale(1); 
-    }
-    50% { 
-        opacity: 0.6; 
-        transform: scale(0.9); 
-    }
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.6; transform: scale(0.9); }
 }
 
 .label-text {
@@ -74,7 +68,7 @@
     transition: color 0.3s ease;
 }
 
-/* Heading statement - Crimson Pro Light */
+/* Heading — Crimson Pro Light */
 .hero-heading {
     font-family: var(--font-display);
     font-size: clamp(2.5rem, 6vw, 5rem);
@@ -90,17 +84,68 @@
     display: inline-block;
 }
 
-/* Subtitle com nome */
+/* Signature — line + italic name */
+.hero-signature {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+.signature-line {
+    display: inline-block;
+    width: 32px;
+    height: 1px;
+    background: var(--color-accent);
+    transition: background-color 0.3s ease;
+}
+
 .hero-subtitle {
-    font-family: var(--font-sans);
-    font-size: 1.25rem;
-    font-weight: 500;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.375rem;
+    font-weight: 400;
     color: var(--color-accent);
-    margin-bottom: var(--spacing-2xl);
+    margin: 0;
     transition: color 0.3s ease;
 }
 
-/* Actions */
+/* =============================================
+   EDITORIAL META BARS (desktop only)
+   ============================================= */
+
+.hero-meta-bar {
+    display: none;
+}
+
+.meta-mark {
+    font-size: var(--font-xs);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    opacity: 0.75;
+}
+
+/* =============================================
+   VERTICAL YEAR (desktop only)
+   ============================================= */
+
+.hero-year {
+    display: none;
+}
+
+/* =============================================
+   SIDE COLUMN (desktop only)
+   ============================================= */
+
+.hero-side {
+    display: none;
+}
+
+/* =============================================
+   ACTIONS (mobile default styles)
+   ============================================= */
+
 .hero-actions {
     display: flex;
     align-items: center;
@@ -110,7 +155,6 @@
     flex-wrap: wrap;
 }
 
-/* CTA minimalista */
 .btn-primary-minimal {
     display: inline-flex;
     align-items: center;
@@ -141,10 +185,7 @@
     z-index: -1;
 }
 
-.btn-primary-minimal:hover::before {
-    width: 100%;
-}
-
+.btn-primary-minimal:hover::before { width: 100%; }
 .btn-primary-minimal:hover {
     color: white;
     border-color: var(--color-accent);
@@ -165,17 +206,7 @@
     transition: color 0.3s ease;
 }
 
-.link-secondary:hover {
-    color: var(--color-accent);
-}
-
-/* =============================================
-   SCROLL INDICATOR - Desktop Only
-   ============================================= */
-
-.scroll-indicator {
-    display: none;
-}
+.link-secondary:hover { color: var(--color-accent); }
 
 /* =============================================
    BACKGROUND
@@ -199,16 +230,11 @@
     pointer-events: none;
 }
 
-/* =============================================
-   MOBILE MARQUEE (activated in mobile media query)
-   ============================================= */
-
-.hero-marquee {
-    display: none;
-}
+/* Mobile marquee is hidden by default; activated in mobile media query */
+.hero-marquee { display: none; }
 
 /* =============================================
-   TABLET (768px+)
+   TABLET (768px+) — editorial split kicks in
    ============================================= */
 
 @media (min-width: 768px) {
@@ -216,8 +242,141 @@
         padding: var(--spacing-6xl) var(--spacing-2xl);
     }
 
-    .hero-subtitle {
-        font-size: 1.375rem;
+    /* Grid: [year] [content] [side] */
+    .hero-grid {
+        display: grid;
+        grid-template-columns: 90px 1fr 220px;
+        gap: var(--spacing-3xl);
+        align-items: center;
+        max-width: 1240px;
+        margin: 0 auto;
+    }
+
+    /* Center content — left-aligned in editorial layout */
+    .hero-content {
+        text-align: left;
+        max-width: none;
+        margin: 0;
+    }
+
+    .hero-label {
+        justify-content: flex-start;
+    }
+
+    .hero-signature {
+        justify-content: flex-start;
+    }
+
+    /* --- Vertical year --- */
+    .hero-year {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        font-family: var(--font-display);
+        font-weight: 200;
+        font-size: clamp(6rem, 10vw, 10rem);
+        line-height: 0.85;
+        letter-spacing: -0.03em;
+        color: rgba(234, 88, 12, 0.32);
+        user-select: none;
+        height: 100%;
+        transition: color 0.4s ease;
+    }
+
+    [data-theme="dark"] .hero-year {
+        color: rgba(168, 85, 247, 0.28);
+    }
+
+    /* --- Side column --- */
+    .hero-side {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: center;
+        gap: var(--spacing-xl);
+        padding-left: var(--spacing-lg);
+        border-left: 1px solid var(--color-border);
+        height: 70%;
+        align-self: center;
+    }
+
+    .side-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        text-align: right;
+    }
+
+    .side-meta-key {
+        font-size: var(--font-xs);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--color-text-tertiary);
+        opacity: 0.6;
+    }
+
+    .side-meta-value {
+        font-size: var(--font-xs);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--color-text-secondary);
+        line-height: 1.6;
+    }
+
+    .side-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: var(--spacing-md);
+        margin-top: var(--spacing-md);
+    }
+
+    /* --- Meta bars top/bottom --- */
+    .hero-meta-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: absolute;
+        left: var(--spacing-2xl);
+        right: var(--spacing-2xl);
+        z-index: 5;
+        pointer-events: none;
+    }
+
+    .hero-meta-bar--top {
+        top: calc(var(--spacing-2xl) + 64px);
+    }
+
+    .hero-meta-bar--bottom {
+        bottom: var(--spacing-2xl);
+    }
+
+    .hero-meta-bar::before,
+    .hero-meta-bar::after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 50%;
+        height: 1px;
+        background: var(--color-border);
+        opacity: 0.5;
+    }
+
+    .hero-meta-bar::before {
+        left: 0;
+        width: 40px;
+    }
+
+    .hero-meta-bar::after {
+        right: 0;
+        width: 40px;
+    }
+
+    /* Hide the actions inside hero-content on desktop (moved to side column) */
+    .hero-content > .hero-actions {
+        display: none;
     }
 }
 
@@ -231,50 +390,25 @@
     }
 
     .hero-heading {
-        font-size: clamp(3.5rem, 5vw, 5rem);
+        font-size: clamp(3rem, 5vw, 4.5rem);
     }
 
-    /* Scroll Indicator */
-    .scroll-indicator {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: var(--spacing-sm);
-        position: absolute;
+    .hero-grid {
+        grid-template-columns: 110px 1fr 240px;
+        gap: var(--spacing-4xl);
+    }
+
+    .hero-meta-bar {
+        left: var(--spacing-3xl);
+        right: var(--spacing-3xl);
+    }
+
+    .hero-meta-bar--top {
+        top: calc(var(--spacing-3xl) + 40px);
+    }
+
+    .hero-meta-bar--bottom {
         bottom: var(--spacing-3xl);
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    .scroll-line {
-        width: 1px;
-        height: 48px;
-        background: linear-gradient(
-            to bottom,
-            transparent 0%,
-            var(--color-accent) 50%,
-            transparent 100%
-        );
-        animation: scrollDown 2s ease-in-out infinite;
-    }
-
-    @keyframes scrollDown {
-        0%, 100% {
-            transform: translateY(-10px);
-            opacity: 0;
-        }
-        50% {
-            transform: translateY(10px);
-            opacity: 1;
-        }
-    }
-
-    .scroll-text {
-        font-size: var(--font-xs);
-        color: var(--color-text-tertiary);
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        transition: color 0.3s ease;
     }
 }
 
@@ -282,10 +416,17 @@
    MOBILE ADJUSTMENTS
    ============================================= */
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
     .hero-section {
         padding: var(--spacing-2xl) var(--spacing-md);
         overflow: hidden;
+    }
+
+    /* Meta bars, vertical year, and side column stay hidden on mobile */
+    .hero-meta-bar,
+    .hero-year,
+    .hero-side {
+        display: none;
     }
 
     /* Prevent marquee's nowrap inline-flex track from forcing
@@ -296,8 +437,13 @@
         max-width: 100%;
     }
 
+    .hero-content {
+        text-align: center;
+    }
+
     .hero-label {
         margin-bottom: var(--spacing-md);
+        justify-content: center;
     }
 
     .hero-heading {
@@ -307,9 +453,12 @@
         margin: var(--spacing-md) 0 var(--spacing-sm);
     }
 
+    .hero-signature {
+        justify-content: center;
+    }
+
     .hero-subtitle {
-        font-size: 1rem;
-        margin-bottom: var(--spacing-lg);
+        font-size: 1.1rem;
     }
 
     .hero-actions {
@@ -329,7 +478,7 @@
         margin-top: var(--spacing-xs);
     }
 
-    /* --- Skills marquee (kept — user liked it) --- */
+    /* --- Skills marquee --- */
     .hero-marquee {
         display: block;
         position: relative;
@@ -384,13 +533,6 @@
         0%   { transform: translateX(0); }
         100% { transform: translateX(-50%); }
     }
-
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .marquee-track {
-        animation: none !important;
-    }
 }
 
 /* =============================================
@@ -399,15 +541,10 @@
 
 @media (prefers-reduced-motion: reduce) {
     .status-dot,
-    .scroll-line {
+    .marquee-track {
         animation: none !important;
     }
 
-    .btn-primary-minimal:hover {
-        transform: none;
-    }
-
-    .btn-primary-minimal::before {
-        transition: none;
-    }
+    .btn-primary-minimal:hover { transform: none; }
+    .btn-primary-minimal::before { transition: none; }
 }
