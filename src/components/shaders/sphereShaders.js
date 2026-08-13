@@ -2,8 +2,6 @@ export const sphereVertexShader = /* glsl */ `
     uniform float uTime;
     uniform float uSize;
     uniform float uDispersion;
-    uniform vec2 uMouse;
-    uniform float uMouseStrength;
 
     attribute float aRandom;
     attribute vec3 aSeed;
@@ -23,26 +21,10 @@ export const sphereVertexShader = /* glsl */ `
         pos += jitter;
 
         // Radial dispersion — pushes each particle outward from center
-        // (further from origin = pushed proportionally more)
         vec2 outward = normalize(pos.xy + vec2(0.001));
         pos.xy += outward * uDispersion * (0.4 + aRandom * 0.9);
 
-        // World position (needed so mouse repulsion applies in world space)
-        vec4 worldPos = modelMatrix * vec4(pos, 1.0);
-
-        // Mouse repulsion — cursor pushes nearby particles away.
-        // Radius stays small so the effect feels localized, not chaotic.
-        // Quadratic falloff = crisp near, gentle at edges.
-        vec2 mouseWorld = uMouse * 3.5;
-        vec2 toMouse = worldPos.xy - mouseWorld;
-        float mDist = length(toMouse);
-        float radius = 1.3;
-        float falloff = 1.0 - clamp(mDist / radius, 0.0, 1.0);
-        falloff = falloff * falloff;
-        float force = falloff * uMouseStrength * (0.55 + aRandom * 0.45);
-        worldPos.xy += normalize(toMouse + vec2(0.001)) * force;
-
-        vec4 mvPosition = viewMatrix * worldPos;
+        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
         gl_Position = projectionMatrix * mvPosition;
 
         gl_PointSize = uSize * (0.6 + aRandom * 0.7) * (12.0 / -mvPosition.z);

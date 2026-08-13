@@ -78,8 +78,6 @@ const ThreeBackground = () => {
             uTime: { value: 0 },
             uSize: { value: 1.8 },
             uDispersion: { value: 0 },
-            uMouse: { value: new THREE.Vector2(0, 0) },
-            uMouseStrength: { value: 0 },
             uColor: { value: initialColor.clone() },
             uOpacity: { value: 0.55 },
         };
@@ -92,6 +90,10 @@ const ThreeBackground = () => {
             blending: THREE.NormalBlending,
         });
         const cloud = new THREE.Points(geometry, material);
+        // Start already diagonal — matches the rotated look the cloud drifts
+        // toward over time, so first-paint feels intentional, not lopsided.
+        const BASE_TILT = 0.55;
+        cloud.rotation.z = BASE_TILT;
         scene.add(cloud);
 
         // --- RESIZE ---
@@ -121,22 +123,6 @@ const ThreeBackground = () => {
         };
         handleScroll();
 
-        // --- MOUSE ---
-        // targetMouse tracks last known cursor position (stays even after leave).
-        // mouseActiveTarget/mouseActive fades the effect in/out on enter/leave
-        // so particles smoothly relax instead of snapping when cursor leaves.
-        const targetMouse = new THREE.Vector2(0, 0);
-        let mouseActiveTarget = 0;
-        let mouseActive = 0;
-        const handleMouseMove = (e) => {
-            targetMouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-            targetMouse.y = -((e.clientY / window.innerHeight) * 2 - 1);
-            mouseActiveTarget = 1;
-        };
-        const handleMouseLeave = () => {
-            mouseActiveTarget = 0;
-        };
-
         // --- ANIMATION ---
         const startTime = performance.now();
         let rafId;
@@ -154,19 +140,11 @@ const ThreeBackground = () => {
             uniforms.uDispersion.value = eased * 2.0;
 
             // Very slow ambient rotation for depth (independent of scroll)
-            cloud.rotation.z = elapsed * 0.02;
+            cloud.rotation.z = BASE_TILT + elapsed * 0.02;
 
             // Opacity: full through Hero + Work, fades before Contact enters view
             const fadeOut = 1 - easeInOut(Math.min(Math.max((p - 0.65) / 0.35, 0), 1));
             uniforms.uOpacity.value = fadeOut * 0.5;
-
-            // Mouse — smooth lerp toward cursor position
-            uniforms.uMouse.value.x += (targetMouse.x - uniforms.uMouse.value.x) * 0.09;
-            uniforms.uMouse.value.y += (targetMouse.y - uniforms.uMouse.value.y) * 0.09;
-
-            // Ease strength up on hover, ease down on leave — no snap
-            mouseActive += (mouseActiveTarget - mouseActive) * 0.06;
-            uniforms.uMouseStrength.value = mouseActive * 0.55;
 
             // Theme lerp
             const targetColor = themeRef.current === 'dark' ? DARK_COLOR : LIGHT_COLOR;
@@ -180,16 +158,12 @@ const ThreeBackground = () => {
             renderer.render(scene, camera);
         } else {
             window.addEventListener('scroll', handleScroll, { passive: true });
-            window.addEventListener('mousemove', handleMouseMove);
-            window.addEventListener('mouseleave', handleMouseLeave);
             rafId = requestAnimationFrame(render);
         }
 
         return () => {
             if (rafId) cancelAnimationFrame(rafId);
             window.removeEventListener('scroll', handleScroll);
-            window.removeEventListener('mousemove', handleMouseMove);
-            window.removeEventListener('mouseleave', handleMouseLeave);
             resizeObserver.disconnect();
             geometry.dispose();
             material.dispose();
