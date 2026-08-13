@@ -226,16 +226,11 @@
         display: inline;
     }
 
-    /* Hover Effects - Desktop Only */
+    /* Hover Effects - Desktop Only (color only, no lift) */
     .social-link:hover {
         background: var(--color-accent);
         border-color: var(--color-accent);
         color: white;
-        transform: translateY(-4px);
-    }
-
-    .social-link:active {
-        transform: translateY(-2px);
     }
 
     /* Manter footer-bottom centralizado mesmo em desktop */

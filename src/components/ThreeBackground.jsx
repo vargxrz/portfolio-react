@@ -8,8 +8,8 @@ const LIGHT_COLOR = new THREE.Color(0xEA580C);
 const DARK_COLOR = new THREE.Color(0xA855F7);
 
 const PARTICLE_COUNT = 1600;
-const INNER_RADIUS = 1.9;
-const OUTER_RADIUS = 3.3;
+const INNER_RADIUS = 2.0;
+const OUTER_RADIUS = 3.8;
 
 const buildRingGeometry = () => {
     const positions = new Float32Array(PARTICLE_COUNT * 3);
