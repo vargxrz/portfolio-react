@@ -127,8 +127,8 @@ const ThreeBackground = () => {
         // --- SCROLL ---
         let scrollProgress = 0;
         const handleScroll = () => {
-            // Progress mapped over 1.8 viewport heights (approx Hero + Work reveal)
-            const total = window.innerHeight * 1.8;
+            // Slower scroll response: animation spans 2.8 viewport heights
+            const total = window.innerHeight * 2.8;
             scrollProgress = Math.min(Math.max(window.scrollY / total, 0), 1);
         };
         handleScroll();
@@ -146,40 +146,32 @@ const ThreeBackground = () => {
             rightUniforms.uTime.value = elapsed;
 
             // --- SCROLL PHASES ---
-            // 0.00 – 0.35 : spheres off-screen fading in
-            // 0.35 – 0.75 : spheres slide toward center
-            // 0.75 – 1.00 : spheres merge & disperse outward
+            // p 0.00 : merged crumbled behind Hero title
+            // p 0.00–0.65 : slowly separating, dispersing outward
+            // p 0.65–1.00 : max spread, particles scattered across screen, fading
             const p = scrollProgress;
+            const eased = easeInOut(p);
 
-            const fadeIn = easeInOut(Math.min(p / 0.3, 1));
-            const slide = easeInOut(Math.min(Math.max((p - 0.1) / 0.55, 0), 1));
-            const merge = easeInOut(Math.min(Math.max((p - 0.65) / 0.35, 0), 1));
-            const fadeOut = 1 - easeInOut(Math.min(Math.max((p - 0.85) / 0.15, 0), 1));
+            // Separation: 0 (merged) to ±3.8 (spread across screen)
+            const sep = eased * 3.8;
 
-            const opacity = fadeIn * fadeOut;
-            leftUniforms.uOpacity.value = opacity * 0.6;
-            rightUniforms.uOpacity.value = opacity * 0.6;
-
-            // Sphere separation: off-screen (±8) to apart-visible (±1.9)
-            // Merge phase pulls them from ±1.9 to 0 (center)
-            const sep = 8 - slide * 6.1;
-            const finalSep = sep * (1 - merge);
-
-            // Merge target rises above viewport center so cards don't cover it
-            const mergeY = merge * 0.9;
-
-            // Vertical drift for elegance
-            const drift = Math.sin(elapsed * 0.3) * 0.15;
-            leftSphere.position.set(-finalSep, drift + mergeY, 0);
-            rightSphere.position.set(finalSep, -drift + mergeY, 0);
-
-            // Dispersion pushes particles outward subtly at merge (breathing)
-            const dispersion = merge * 0.6;
+            // Dispersion: subtle crumbled (0.2) at rest, grows to 1.3 (scattered farelo)
+            const dispersion = 0.2 + eased * 1.1;
             leftUniforms.uDispersion.value = dispersion;
             rightUniforms.uDispersion.value = dispersion;
 
-            // Rotation on own axis — spinning faster during merge (impact)
-            const rot = elapsed * 0.15 + slide * 0.4 + merge * 2.0;
+            // Opacity: full early, fades as they spread thin
+            const fadeOut = 1 - easeInOut(Math.min(Math.max((p - 0.55) / 0.45, 0), 1)) * 0.75;
+            leftUniforms.uOpacity.value = fadeOut * 0.5;
+            rightUniforms.uOpacity.value = fadeOut * 0.5;
+
+            // Vertical drift for elegance
+            const drift = Math.sin(elapsed * 0.3) * 0.15;
+            leftSphere.position.set(-sep, drift, 0);
+            rightSphere.position.set(sep, -drift, 0);
+
+            // Slow continuous rotation
+            const rot = elapsed * 0.12;
             leftSphere.rotation.y = rot;
             leftSphere.rotation.x = rot * 0.3;
             rightSphere.rotation.y = -rot;
