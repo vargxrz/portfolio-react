@@ -10,95 +10,36 @@ const DARK_COLOR = new THREE.Color(0xA855F7);
 const PARTICLE_COUNT_DESKTOP = 1600;
 const PARTICLE_COUNT_MOBILE = 700;
 
-// Mobile — annular ring hugging the centered hero title (portrait).
+// Ring dimensions per viewport. Mobile is narrower & taller (portrait),
+// so we tighten the ring and switch the ellipse ratio so particles hug
+// the title area instead of hiding at the screen edges.
+const RING_DESKTOP = { inner: 2.0, outer: 5.0, xScale: 1.35, yScale: 0.85 };
 const RING_MOBILE = { inner: 1.1, outer: 2.4, xScale: 0.95, yScale: 1.15 };
-
-// Desktop editorial config: main cluster gently left-biased so it feels
-// like it comes from the "2026" without dominating the top-left, plus
-// sparse spark clusters at the four corners echoing the meta-bar framing.
-const EDITORIAL_DESKTOP = {
-    mainOffsetX: -1.2,
-    mainInner: 1.4,
-    mainOuter: 4.0,
-    mainXScale: 1.15,
-    mainYScale: 1.0,
-    cornerRadius: 0.9,
-    corners: [
-        [-4.7, 2.4],
-        [4.7, 2.4],
-        [-4.7, -2.4],
-        [4.7, -2.4],
-    ],
-    mainShare: 0.82, // rest split evenly across the 4 corners
-};
-
-const writeParticle = (buffers, i, x, y, z) => {
-    buffers.positions[i * 3] = x;
-    buffers.positions[i * 3 + 1] = y;
-    buffers.positions[i * 3 + 2] = z;
-    buffers.randoms[i] = Math.random();
-    buffers.seeds[i * 3] = Math.random();
-    buffers.seeds[i * 3 + 1] = Math.random();
-    buffers.seeds[i * 3 + 2] = Math.random();
-};
 
 const buildRingGeometry = (count, ring) => {
     const positions = new Float32Array(count * 3);
     const randoms = new Float32Array(count);
     const seeds = new Float32Array(count * 3);
-    const buffers = { positions, randoms, seeds };
 
     for (let i = 0; i < count; i++) {
+        // Annular (donut) distribution: particles occupy a band around center,
+        // leaving the middle empty so the hero title stays clear.
         const angle = Math.random() * Math.PI * 2;
-        const rBase = Math.sqrt(Math.random());
+        const rBase = Math.sqrt(Math.random()); // uniform density within the band
         const radius = ring.inner + rBase * (ring.outer - ring.inner);
+
         const x = Math.cos(angle) * radius * ring.xScale;
         const y = Math.sin(angle) * radius * ring.yScale;
         const z = (Math.random() - 0.5) * 1.2;
-        writeParticle(buffers, i, x, y, z);
-    }
 
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
-    geometry.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 3));
-    return geometry;
-};
+        positions[i * 3] = x;
+        positions[i * 3 + 1] = y;
+        positions[i * 3 + 2] = z;
 
-const buildEditorialGeometry = (count, cfg) => {
-    const mainCount = Math.floor(count * cfg.mainShare);
-    const perCornerCount = Math.floor((count - mainCount) / cfg.corners.length);
-    const totalCount = mainCount + perCornerCount * cfg.corners.length;
-
-    const positions = new Float32Array(totalCount * 3);
-    const randoms = new Float32Array(totalCount);
-    const seeds = new Float32Array(totalCount * 3);
-    const buffers = { positions, randoms, seeds };
-
-    // Main cluster — annular, vertical ellipse, offset to the left so
-    // it emanates from the "2026" area and clears the right sidebar.
-    for (let i = 0; i < mainCount; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const rBase = Math.sqrt(Math.random());
-        const radius = cfg.mainInner + rBase * (cfg.mainOuter - cfg.mainInner);
-        const x = Math.cos(angle) * radius * cfg.mainXScale + cfg.mainOffsetX;
-        const y = Math.sin(angle) * radius * cfg.mainYScale;
-        const z = (Math.random() - 0.5) * 1.0;
-        writeParticle(buffers, i, x, y, z);
-    }
-
-    // Corner sparks — small dense clusters framing the viewport corners.
-    let idx = mainCount;
-    for (const [cx, cy] of cfg.corners) {
-        for (let i = 0; i < perCornerCount; i++) {
-            const angle = Math.random() * Math.PI * 2;
-            const r = Math.sqrt(Math.random()) * cfg.cornerRadius;
-            const x = Math.cos(angle) * r + cx;
-            const y = Math.sin(angle) * r + cy;
-            const z = (Math.random() - 0.5) * 0.6;
-            writeParticle(buffers, idx, x, y, z);
-            idx++;
-        }
+        randoms[i] = Math.random();
+        seeds[i * 3] = Math.random();
+        seeds[i * 3 + 1] = Math.random();
+        seeds[i * 3 + 2] = Math.random();
     }
 
     const geometry = new THREE.BufferGeometry();
@@ -138,16 +79,14 @@ const ThreeBackground = () => {
         const initialColor = themeRef.current === 'dark' ? DARK_COLOR : LIGHT_COLOR;
 
         const particleCount = isMobile ? PARTICLE_COUNT_MOBILE : PARTICLE_COUNT_DESKTOP;
-        const geometry = isMobile
-            ? buildRingGeometry(particleCount, RING_MOBILE)
-            : buildEditorialGeometry(particleCount, EDITORIAL_DESKTOP);
-
+        const ring = isMobile ? RING_MOBILE : RING_DESKTOP;
+        const geometry = buildRingGeometry(particleCount, ring);
         const uniforms = {
             uTime: { value: 0 },
-            uSize: { value: isMobile ? 1.4 : 1.7 },
+            uSize: { value: isMobile ? 1.4 : 1.8 },
             uDispersion: { value: 0 },
             uColor: { value: initialColor.clone() },
-            uOpacity: { value: isMobile ? 0.38 : 0.5 },
+            uOpacity: { value: isMobile ? 0.38 : 0.55 },
         };
         const material = new THREE.ShaderMaterial({
             vertexShader: sphereVertexShader,
@@ -158,14 +97,13 @@ const ThreeBackground = () => {
             blending: THREE.NormalBlending,
         });
         const cloud = new THREE.Points(geometry, material);
-
-        // Mobile keeps the diagonal ring look. Desktop editorial layout is
-        // intentionally still — asymmetry does the visual work, not rotation.
-        const BASE_TILT = isMobile ? 0.55 : 0;
-        const AMBIENT_ROT_SPEED = isMobile ? 0.02 : 0.008;
+        // Start already diagonal — matches the rotated look the cloud drifts
+        // toward over time, so first-paint feels intentional, not lopsided.
+        const BASE_TILT = 0.55;
         cloud.rotation.z = BASE_TILT;
         scene.add(cloud);
 
+        // --- RESIZE ---
         const resize = () => {
             const { clientWidth: w, clientHeight: h } = container;
             if (w === 0 || h === 0) return;
@@ -177,6 +115,9 @@ const ThreeBackground = () => {
         const resizeObserver = new ResizeObserver(resize);
         resizeObserver.observe(container);
 
+        // --- SCROLL ---
+        // Animation range spans almost the entire scrollable distance up to just
+        // before the Contact section — gives the animation a slow, patient feel.
         let scrollProgress = 0;
         const handleScroll = () => {
             const contact = document.getElementById('contact');
@@ -189,6 +130,7 @@ const ThreeBackground = () => {
         };
         handleScroll();
 
+        // --- ANIMATION ---
         const startTime = performance.now();
         let rafId;
 
@@ -199,13 +141,22 @@ const ThreeBackground = () => {
             const p = scrollProgress;
             const eased = easeInOut(p);
 
+            // Dispersion is the whole scroll story:
+            //   p = 0 : particles sit in the ring around the title (no push)
+            //   p ↑   : each particle is pushed outward, ring expands, particles thin
+            // Max 4.5 pushes particles well past visible content area, keeping
+            // the center clear so Work cards aren't overlapped.
             uniforms.uDispersion.value = eased * 4.5;
 
-            cloud.rotation.z = BASE_TILT + elapsed * AMBIENT_ROT_SPEED;
+            // Very slow ambient rotation for depth (independent of scroll)
+            cloud.rotation.z = BASE_TILT + elapsed * 0.02;
 
+            // Opacity: full through Hero + Work, fades before Contact enters view.
+            // Mobile ceiling is lower so background stays clean, not polluted.
             const fadeOut = 1 - easeInOut(Math.min(Math.max((p - 0.65) / 0.35, 0), 1));
             uniforms.uOpacity.value = fadeOut * (isMobile ? 0.35 : 0.5);
 
+            // Theme lerp
             const targetColor = themeRef.current === 'dark' ? DARK_COLOR : LIGHT_COLOR;
             uniforms.uColor.value.lerp(targetColor, 0.08);
 
