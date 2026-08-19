@@ -13,47 +13,47 @@ const Work = () => {
             number: "01",
             title: "Finassa",
             titleAccent: "Finance",
-            description: "Personal finance management app, mobile-first. Track spending, budgets, and financial goals with a clean interface.",
-            tech: ["TypeScript", "React", "Mobile-first"],
+            description: "Personal finance management app built with Next.js and TypeScript. Track spending, budgets, and financial goals with a clean, modern interface.",
+            tech: ["TypeScript", "Next.js", "Docker"],
             links: {
                 live: null,
                 github: "https://github.com/vargxrz/finassa"
             },
-            category: "Mobile App"
+            category: "Full Stack"
         },
         {
             number: "02",
-            title: "Virtual",
-            titleAccent: "Menu",
-            description: "A responsive virtual menu built with HTML, CSS, and JavaScript for restaurants. Features modern design and smooth animations.",
-            tech: ["HTML", "CSS", "JavaScript"],
+            title: "Movies",
+            titleAccent: "Library",
+            description: "Movie discovery app built with React and React Router. Browse, search, and explore films with a responsive and modern UI.",
+            tech: ["React", "JavaScript", "Vite"],
             links: {
-                live: "https://moveio.vercel.app/",
-                github: null
+                live: null,
+                github: "https://github.com/vargxrz/movies-lib-react"
             },
             category: "Frontend"
         },
         {
             number: "03",
-            title: "Push",
-            titleAccent: "Notifications",
-            description: "Java backend POC integrated with Firebase for managing and sending push notifications to mobile applications.",
-            tech: ["Java", "Firebase", "Spring Boot"],
+            title: "Restaurant",
+            titleAccent: "Menu",
+            description: "Responsive virtual menu for restaurants built with HTML, CSS, and JavaScript. Features modern design and smooth animations.",
+            tech: ["HTML", "CSS", "JavaScript"],
             links: {
                 live: null,
-                github: "https://github.com/vargxrz/poc-push-notification-back"
+                github: "https://github.com/vargxrz/restaurant-menu"
             },
-            category: "Backend"
+            category: "Frontend"
         },
         {
             number: "04",
-            title: "CRUD",
-            titleAccent: "Spring Boot",
-            description: "Complete Java backend project with Spring Boot featuring REST APIs, JPA for data persistence, and CRUD operations.",
-            tech: ["Java", "Spring Boot", "JPA", "PostgreSQL"],
+            title: "Push",
+            titleAccent: "Notification",
+            description: "Java backend POC integrated with Firebase Cloud Messaging for sending push notifications to mobile applications.",
+            tech: ["Java", "Firebase", "FCM"],
             links: {
                 live: null,
-                github: "https://github.com/vargxrz/Spring-Product/tree/master"
+                github: "https://github.com/vargxrz/push-notification"
             },
             category: "Backend"
         }
