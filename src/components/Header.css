@@ -15,35 +15,21 @@
 }
 
 .header.scrolled {
-    background: rgba(250, 250, 249, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-}
-
-[data-theme="dark"] .header.scrolled {
-    background: rgba(10, 10, 10, 0.8);
+    background: var(--header-scrolled-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
 }
 
 /* Background sólido quando menu mobile está aberto (no topo da página) */
 .header.menu-open {
-    background: rgba(250, 250, 249, 0.98);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-}
-
-[data-theme="dark"] .header.menu-open {
-    background: rgba(10, 10, 10, 0.98);
+    background: var(--header-menu-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
 }
 
 /* Quando scrolled E menu aberto, manter estilo scrolled */
 .header.scrolled.menu-open {
-    background: rgba(250, 250, 249, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-}
-
-[data-theme="dark"] .header.scrolled.menu-open {
-    background: rgba(10, 10, 10, 0.8);
+    background: var(--header-scrolled-bg);
 }
 
 .header-content {
