@@ -1,0 +1,239 @@
+.contact {
+  position: relative;
+  padding-bottom: 40px;
+  border-top: 1px solid var(--line);
+  overflow: clip;
+}
+
+.contact::before {
+  content: '';
+  position: absolute;
+  right: -10%;
+  top: 18%;
+  width: min(900px, 110vw);
+  aspect-ratio: 1.6;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%);
+  pointer-events: none;
+}
+
+.contact__grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: center;
+}
+
+.contact__title {
+  font-size: clamp(2.6rem, 1rem + 6vw, 7rem);
+  text-wrap: balance;
+}
+
+.contact__lede {
+  margin-top: 28px;
+}
+
+.contact__email {
+  margin-top: clamp(32px, 5vw, 56px);
+}
+
+.contact__mail {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+  font-size: clamp(1.15rem, 0.8rem + 1.6vw, 2rem);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  word-break: break-all;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-size: 0% 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.35s var(--ease-out), color 0.2s ease;
+  padding-bottom: 4px;
+}
+
+.contact__mail svg {
+  flex: none;
+  color: var(--accent);
+}
+
+.contact__mail:hover {
+  background-size: 100% 2px;
+}
+
+.contact__key {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.contact__stage {
+  position: relative;
+  width: 100%;
+  height: clamp(220px, 28vw, 360px);
+}
+
+.contact__stage canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.contact__fallback-key {
+  position: absolute;
+  inset: 20% 15%;
+  font-size: 1.6rem;
+  --cap-h: 10px;
+  border-radius: 16px;
+}
+
+.contact__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.contact__hint:hover {
+  color: var(--ink);
+  background: var(--bg-raised);
+}
+
+.contact__social {
+  position: relative;
+  margin-top: clamp(64px, 9vw, 120px);
+}
+
+.contact__social ul {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+}
+
+.social {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    'icon label go'
+    'icon handle go';
+  column-gap: 14px;
+  align-items: center;
+  padding: 22px 20px 22px 0;
+  border-bottom: 1px solid var(--line);
+  transition: color 0.2s ease;
+}
+
+.contact__social li + li .social {
+  padding-left: 20px;
+  border-left: 1px solid var(--line);
+}
+
+.social svg:first-child {
+  grid-area: icon;
+  color: var(--ink-2);
+}
+
+.social__label {
+  grid-area: label;
+  font-weight: 650;
+}
+
+.social__handle {
+  grid-area: handle;
+  color: var(--ink-3);
+}
+
+.social__go {
+  grid-area: go;
+  color: var(--ink-3);
+  transition: transform 0.3s var(--ease-out), color 0.2s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .social:hover .social__go {
+    color: var(--accent);
+    transform: translate(3px, -3px);
+  }
+}
+
+.colophon {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px 32px;
+  align-items: center;
+  margin-top: clamp(56px, 8vw, 96px);
+  padding-top: 24px;
+  color: var(--ink-3);
+  font-size: 0.8125rem;
+}
+
+.colophon__top {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  color: var(--ink-2);
+}
+
+.colophon__top:hover {
+  color: var(--ink);
+  background: var(--bg-raised);
+}
+
+.toast-region {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 60;
+  pointer-events: none;
+}
+
+.toast {
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--bg);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
+}
+
+.toast--warn {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+@media (max-width: 900px) {
+  .contact__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact__social ul {
+    grid-template-columns: 1fr;
+  }
+
+  .contact__social li + li .social {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .colophon {
+    grid-template-columns: 1fr;
+  }
+
+  .colophon__top {
+    justify-self: start;
+    padding-left: 0;
+  }
+}

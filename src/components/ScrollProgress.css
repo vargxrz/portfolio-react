@@ -1,22 +1,11 @@
-/* =============================================
-   SCROLL PROGRESS INDICATOR
-   ============================================= */
-
 .scroll-progress {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--color-accent);
-    transform-origin: 0%;
-    z-index: 9999;
-    box-shadow: 0 0 10px var(--color-accent);
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-}
-
-@media (max-width: 768px) {
-    .scroll-progress {
-        height: 2px;
-    }
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  transform-origin: 0%;
+  z-index: 70;
+  pointer-events: none;
 }

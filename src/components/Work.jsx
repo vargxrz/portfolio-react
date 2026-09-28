@@ -1,181 +1,109 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import useIsMobile from '../hooks/useIsMobile';
-import useScrollAnimation from '../hooks/useScrollAnimation';
+import { useRef } from 'react';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import Reveal, { SectionHead } from './Reveal.jsx';
+import { useI18n } from '../contexts/I18nContext.jsx';
 import './Work.css';
 
+const Flow = ({ steps, label }) => {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 85%', 'end 55%'] });
+  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restDelta: 0.001 });
+  const scaleX = useTransform(progress, [0, 1], [0, 1]);
+
+  return (
+    <div className="flow" ref={ref}>
+      <p className="eyebrow flow__label">{label}</p>
+      <div className="flow__track" aria-hidden="true">
+        <motion.span className="flow__fill" style={{ '--p': scaleX }} />
+      </div>
+      <ol className="flow__steps">
+        {steps.map((step, i) => (
+          <Reveal as="li" key={step.title} className="flow__step" delay={i * 0.06} y={14}>
+            <span className="flow__node mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h4 className="flow__title">{step.title}</h4>
+            <p className="flow__body">{step.body}</p>
+            <span className="flow__tag mono">{step.tag}</span>
+          </Reveal>
+        ))}
+      </ol>
+    </div>
+  );
+};
+
 const Work = () => {
-    const isMobile = useIsMobile();
-    const [ref, isVisible] = useScrollAnimation(0.2);
+  const { t } = useI18n();
+  const w = t.work;
 
-    const projects = [
-        {
-            number: "01",
-            title: "Finassa",
-            titleAccent: "Finance",
-            description: "Personal finance management app built with Next.js and TypeScript. Track spending, budgets, and financial goals with a clean, modern interface.",
-            tech: ["TypeScript", "Next.js", "Docker"],
-            links: {
-                live: null,
-                github: "https://github.com/vargxrz/finassa"
-            },
-            category: "Full Stack"
-        },
-        {
-            number: "02",
-            title: "Movies",
-            titleAccent: "Library",
-            description: "Movie discovery app built with React and React Router. Browse, search, and explore films with a responsive and modern UI.",
-            tech: ["React", "JavaScript", "Vite"],
-            links: {
-                live: null,
-                github: "https://github.com/vargxrz/movies-lib-react"
-            },
-            category: "Frontend"
-        },
-        {
-            number: "03",
-            title: "Restaurant",
-            titleAccent: "Menu",
-            description: "Responsive virtual menu for restaurants built with HTML, CSS, and JavaScript. Features modern design and smooth animations.",
-            tech: ["HTML", "CSS", "JavaScript"],
-            links: {
-                live: null,
-                github: "https://github.com/vargxrz/restaurant-menu"
-            },
-            category: "Frontend"
-        },
-        {
-            number: "04",
-            title: "Push",
-            titleAccent: "Notification",
-            description: "Java backend POC integrated with Firebase Cloud Messaging for sending push notifications to mobile applications.",
-            tech: ["Java", "Firebase", "FCM"],
-            links: {
-                live: null,
-                github: "https://github.com/vargxrz/push-notification"
-            },
-            category: "Backend"
-        }
-    ];
+  return (
+    <section id="trabalho" className="section work" aria-labelledby="work-title">
+      <div className="wrap">
+        <SectionHead index={w.index} label={w.label} />
 
-    const rowContainerVariants = {
-        hidden: {},
-        visible: {
-            transition: {
-                staggerChildren: 0.08,
-                delayChildren: 0.05,
-            },
-        },
-    };
+        <article className="case" aria-labelledby="work-title">
+          <div className="case__text">
+            <Reveal as="p" className="eyebrow case__label">{w.caseLabel}</Reveal>
+            <Reveal as="h2" id="work-title" className="title case__title" delay={0.05}>{w.caseTitle}</Reveal>
+            <Reveal as="p" className="mono case__meta" delay={0.1}>{w.caseMeta}</Reveal>
+            <Reveal as="p" className="lede case__body" delay={0.15}>{w.caseBody}</Reveal>
+          </div>
 
-    const numVariants = {
-        hidden: { opacity: 0, x: -16 },
-        visible: {
-            opacity: 1,
-            x: 0,
-            transition: { duration: 0.7, ease: [0.25, 0.4, 0.25, 1] },
-        },
-    };
+          <Reveal className="metric" delay={0.1} aria-label={`${w.metricFrom} → ${w.metricTo} ${w.metricCaption}`}>
+            <p className="metric__from" aria-hidden="true">
+              <s>{w.metricFrom}</s>
+            </p>
+            <p className="metric__to display" aria-hidden="true">{w.metricTo}</p>
+            <p className="metric__caption mono" aria-hidden="true">{w.metricCaption}</p>
+          </Reveal>
+        </article>
 
-    const itemVariants = {
-        hidden: { opacity: 0, y: 14 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.5, ease: [0.25, 0.4, 0.25, 1] },
-        },
-    };
+        <Flow steps={w.steps} label={w.flowLabel} />
 
-    const ProjectRow = ({ project, index }) => {
-        const cardLink = project.links.live || project.links.github;
-        const linkLabel = project.links.live ? "VIEW LIVE" : "VIEW CODE";
-        const isRight = index % 2 === 1;
+        <div className="shipped">
+          <Reveal as="h3" className="subhead">{w.shippedTitle}</Reveal>
+          <ul className="shipped__list">
+            {w.shipped.map((item, i) => (
+              <Reveal as="li" key={item.title} className="shipped__row" delay={i * 0.05}>
+                <h4 className="shipped__title">{item.title}</h4>
+                <p className="mono shipped__stack">{item.stack}</p>
+                <p className="shipped__body">{item.body}</p>
+              </Reveal>
+            ))}
+          </ul>
+          <Reveal as="p" className="shipped__testing">
+            <CheckCircle2 size={18} strokeWidth={1.8} aria-hidden="true" />
+            {w.testing}
+          </Reveal>
+        </div>
 
-        return (
-            <motion.a
-                href={cardLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`proj-row ${isRight ? 'proj-row--right' : 'proj-row--left'}`}
-                variants={rowContainerVariants}
-                initial="hidden"
-                animate={isVisible ? 'visible' : 'hidden'}
-                transition={{ delayChildren: index * 0.12 }}
-                whileTap={{ scale: 0.985 }}
-            >
-                <motion.span
-                    className="proj-num"
-                    variants={numVariants}
-                    style={{ transformOrigin: isRight ? 'right center' : 'left center' }}
-                >
-                    {project.number}
-                </motion.span>
-                <div className="proj-content">
-                    <motion.span className="proj-label mono" variants={itemVariants}>
-                        {project.category}
-                    </motion.span>
-                    <motion.h3 className="proj-title" variants={itemVariants}>
-                        {project.title} <em>{project.titleAccent}</em>
-                    </motion.h3>
-                    <motion.p className="proj-desc" variants={itemVariants}>
-                        {project.description}
-                    </motion.p>
-                    <motion.div className="proj-tags" variants={itemVariants}>
-                        {project.tech.map((tech) => (
-                            <span key={tech} className="proj-tag mono">{tech}</span>
-                        ))}
-                    </motion.div>
-                    <motion.span className="proj-link mono" variants={itemVariants}>
-                        {linkLabel} <span className="proj-link-arrow">→</span>
-                    </motion.span>
-                </div>
-            </motion.a>
-        );
-    };
-
-    return (
-        <section id="work" className="work-section" ref={ref}>
-            <div className="container">
-                <motion.div
-                    className="work-header"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={isVisible ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.8 }}
-                >
-                    <div className="section-label">
-                        <motion.span
-                            className="label-line"
-                            initial={{ width: 0 }}
-                            animate={isVisible ? { width: 48 } : {}}
-                            transition={{ duration: 0.6, delay: 0.2 }}
-                        ></motion.span>
-                        <span className="label-text mono">Featured Work</span>
-                    </div>
-                    <h2 className="section-heading">
-                        Turning Ideas
-                        <span className="heading-accent"> Into Reality</span>
-                    </h2>
-                    <p className="section-description">
-                        {isMobile
-                            ? "Selected projects showcasing my skills across frontend, backend, and full-stack development."
-                            : "A showcase of carefully crafted projects that demonstrate my technical expertise, creative problem-solving, and dedication to building exceptional digital experiences."
-                        }
-                    </p>
-                </motion.div>
-
-                <div className="work-rows">
-                    {projects.map((project, index) => (
-                        <ProjectRow
-                            key={project.title + project.number}
-                            project={project}
-                            index={index}
-                        />
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
+        <div className="projects">
+          <Reveal className="projects__head">
+            <h3 className="subhead">{w.projectsTitle}</h3>
+            <p className="mono projects__note">{w.projectsNote}</p>
+          </Reveal>
+          <ul className="projects__list">
+            {w.projects.map((p, i) => (
+              <Reveal as="li" key={p.name} delay={i * 0.05}>
+                <a className="project" href={p.href} target="_blank" rel="noopener noreferrer">
+                  <span className="mono project__index" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="project__name">{p.name}</span>
+                  <span className="project__desc">{p.desc}</span>
+                  <span className="project__tech mono">
+                    <span className="project__kind">{p.kind}</span>
+                    {p.tech.join(' · ')}
+                  </span>
+                  <span className="project__go">
+                    <span className="visually-hidden">{w.viewCode} — GitHub</span>
+                    <ArrowUpRight size={22} strokeWidth={1.6} aria-hidden="true" />
+                  </span>
+                </a>
+              </Reveal>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default Work;
