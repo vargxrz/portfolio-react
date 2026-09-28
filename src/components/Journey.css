@@ -1,0 +1,148 @@
+.journey {
+  background: var(--bg-sunken);
+}
+
+.journey__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  gap: clamp(40px, 7vw, 120px);
+  align-items: start;
+}
+
+.journey__intro {
+  position: sticky;
+  top: calc(var(--header-h) + 48px);
+}
+
+.journey__lede {
+  margin-top: 28px;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 40px;
+}
+
+.timeline__rail {
+  position: absolute;
+  left: 7px;
+  top: 12px;
+  width: 2px;
+  background: var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.timeline__rail-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform-origin: top center;
+}
+
+.timeline__item {
+  position: relative;
+  padding-bottom: clamp(36px, 5vw, 56px);
+}
+
+.timeline__node {
+  position: absolute;
+  left: -40px;
+  top: 4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  background: var(--bg-sunken);
+  border: 2px solid var(--line-strong);
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.4s var(--ease-out);
+}
+
+/* the orange rail "reaches" each job as you scroll down the timeline */
+.timeline__item.is-reached .timeline__node,
+.timeline__item.is-current .timeline__node {
+  border-color: var(--accent);
+}
+
+.timeline__item.is-current.is-reached .timeline__node {
+  background: var(--accent);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.timeline__item:last-child {
+  padding-bottom: clamp(40px, 6vw, 64px);
+}
+
+.timeline__when {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink-2);
+}
+
+.timeline__now {
+  padding: 1px 7px;
+  border-radius: 5px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.timeline__role {
+  margin-top: 10px;
+  font-size: var(--step-2);
+  font-weight: 700;
+  font-stretch: 112%;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.timeline__org {
+  margin-top: 4px;
+  font-weight: 550;
+  color: var(--ink);
+}
+
+.timeline__body {
+  margin-top: 10px;
+  color: var(--ink-2);
+  max-width: 56ch;
+}
+
+.education {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-left: -40px;
+  padding: 24px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 14px;
+  color: var(--ink-2);
+}
+
+.education svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--accent);
+}
+
+.education__name {
+  margin-top: 4px;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.education__when {
+  margin-top: 4px;
+}
+
+@media (max-width: 900px) {
+  .journey__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .journey__intro {
+    position: static;
+  }
+}

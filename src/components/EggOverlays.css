@@ -1,0 +1,194 @@
+/* ------------------------------------------------ "teste": JUnit runner */
+
+.test-runner {
+  position: fixed;
+  top: calc(var(--header-h) + 12px);
+  right: var(--gutter);
+  z-index: 80;
+  width: min(380px, calc(100vw - var(--gutter) * 2));
+  padding: 14px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--bg-raised) 94%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.32);
+  font-size: 0.78rem;
+  color: var(--ink-2);
+}
+
+.test-runner__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.test-runner__run {
+  color: #3ddc84;
+  font-size: 0.7rem;
+}
+
+.test-runner__list li {
+  display: grid;
+  grid-template-columns: 16px 1fr auto;
+  gap: 8px;
+  align-items: baseline;
+  padding: 3px 0;
+}
+
+.test-runner__list li.is-running {
+  color: var(--ink);
+}
+
+.test-runner__list li.is-running .test-runner__icon {
+  color: var(--accent);
+  animation: blink 0.5s steps(1) infinite;
+}
+
+.test-runner__list li.is-passed {
+  color: var(--ink);
+}
+
+.test-runner__list li.is-passed .test-runner__icon {
+  color: #3ddc84;
+}
+
+.test-runner__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.test-runner__ms {
+  color: var(--ink-3);
+}
+
+.test-runner__summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.test-runner__summary strong {
+  color: #3ddc84;
+  font-weight: 500;
+}
+
+/* ------------------------------------------------ "poker": polaroid */
+
+.polaroid {
+  position: fixed;
+  bottom: clamp(16px, 4vh, 40px);
+  left: clamp(16px, 5vw, 80px);
+  z-index: 82;
+  width: min(260px, 56vw);
+  margin: 0;
+  padding: 12px 12px 0;
+  background: #f7f3ea;
+  border-radius: 3px;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    0 22px 50px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  transform-origin: 50% 100%;
+}
+
+.polaroid img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1.05;
+  object-fit: cover;
+  object-position: 50% 30%;
+  filter: saturate(0.92) contrast(1.03);
+}
+
+.polaroid figcaption {
+  padding: 14px 4px 18px;
+  color: #1b2324;
+  font-family: var(--font-sans);
+  font-style: italic;
+  font-weight: 650;
+  font-size: 1.05rem;
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+
+/* strip of masking tape holding the photo */
+.polaroid__tape {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: 96px;
+  height: 26px;
+  transform: translateX(-50%) rotate(-3deg);
+  background: color-mix(in srgb, #efe6d4 78%, transparent);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* phones: sit over the title instead, keeping the 3D cards and the Type button free */
+@media (max-width: 640px) {
+  .polaroid {
+    top: calc(var(--header-h) + 14px);
+    bottom: auto;
+    left: auto;
+    right: 18px;
+    width: min(200px, 50vw);
+    padding: 9px 9px 0;
+  }
+
+  .polaroid figcaption {
+    padding: 10px 2px 13px;
+    font-size: 0.875rem;
+  }
+}
+
+/* ------------------------------------------------ "curbas": full-screen shout */
+
+.shout {
+  position: fixed;
+  inset: 0;
+  z-index: 85;
+  display: grid;
+  place-items: center;
+  padding: var(--gutter);
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  pointer-events: none;
+}
+
+.shout__text {
+  font-size: clamp(3rem, 1rem + 9vw, 11rem);
+  color: var(--ink);
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 0.28em;
+}
+
+.shout__line {
+  display: inline-flex;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
+.shout__char {
+  display: inline-block;
+  transform-origin: left bottom;
+}
+
+.shout__dot {
+  display: inline-block;
+  color: var(--accent);
+}

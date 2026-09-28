@@ -27,3 +27,14 @@ dist-ssr
 .superpowers/
 .playwright-mcp/
 /*.png
+
+# img2threejs working files (screenshots / extracted maps); spec + reference stay versioned
+.img2threejs/site/
+.img2threejs/renders/
+.img2threejs/detail-inventory/
+.img2threejs/material-evidence/
+
+# local working files (3D reconstruction process, review pages, editor/tool config)
+.img2threejs/
+review/
+.claude/

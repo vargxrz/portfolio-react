@@ -1,205 +1,594 @@
-import React, { useEffect } from 'react';
-import { motion, useMotionValue, useTransform, useReducedMotion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
-import useIsMobile from '../hooks/useIsMobile';
+import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion';
+import { ArrowRight, Download, Keyboard } from 'lucide-react';
+import KeyboardCanvas from './KeyboardCanvas.jsx';
+import { Polaroid, Shout, TestRunner } from './EggOverlays.jsx';
+import useBootReady from '../hooks/useBootReady.js';
+import { markFound } from '../lib/eggs.js';
+import { useI18n } from '../contexts/I18nContext.jsx';
+import { LINKS } from '../content.js';
+import { scrollToId } from '../hooks/useSmoothScroll.js';
+import { isTypingTarget, letterOf } from '../lib/keyboard.js';
+import { exhaust, glitch, gravity, hearts, keycapRain } from '../lib/effects.js';
 import './Hero.css';
 
+// Longest first so a long word never loses to a shorter suffix.
+// ("test" is deliberately absent: it is a prefix of "teste" and would fire twice)
+const EGG_WORDS = ['gravidade', 'segredo', 'gravity', 'vargas', 'sagrav', 'secret', 'deploy', 'curbas', 'poker', 'teste', 'junit', 'joao', 'ana', 'rgb'];
+
+const POKER_PHOTO = '/assets/eggs/poker.webp';
+
+const SCRAMBLE = '!<>-_\\/[]{}—=+*^?#01';
+
+/** Text that decodes itself from noise, left to right ("segredo"). */
+const ScrambleText = ({ text }) => {
+  const [out, setOut] = useState(text);
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { setOut(text); return undefined; }
+    let frame = 0;
+    const total = 42;
+    const id = window.setInterval(() => {
+      frame += 1;
+      const solved = Math.floor((frame / total) * text.length);
+      setOut(text.split('').map((c, i) => (i < solved || c === ' ' ? c : SCRAMBLE[Math.floor(Math.random() * SCRAMBLE.length)])).join(''));
+      if (frame >= total) window.clearInterval(id);
+    }, 32);
+    return () => window.clearInterval(id);
+  }, [text]);
+  return <span aria-label={text}><span aria-hidden="true">{out}</span></span>;
+};
+
+const RAIN_LABELS = [
+  'Java', 'Spring Boot', 'React', 'Flutter', 'TDD', 'Figma', 'PostgreSQL', 'Docker',
+  'AWS Bedrock', 'Amazon S3', 'JUnit', 'Playwright', 'Twilio', '2–3 min', 'Gaspar, SC', 'Git',
+];
+
+const NAME_KEYS = [
+  { legend: 'V', match: ['v'], accent: true },
+  { legend: 'A', match: ['a'] },
+  { legend: 'R', match: ['r'] },
+  { legend: 'G', match: ['g'] },
+  { legend: 'A', match: ['a'] },
+  { legend: 'S', match: ['s'] },
+];
+
+const EASE = [0.22, 1, 0.36, 1];
+
+// entrance waits for the boot loader, so it plays in front of the visitor, not behind the curtain
+const rise = (delay, booted) => ({
+  initial: { opacity: 0, y: 24 },
+  animate: booted ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 },
+  transition: { duration: 0.9, delay, ease: EASE },
+});
+
 const Hero = () => {
-    const isMobile = useIsMobile();
-    const shouldReduceMotion = useReducedMotion();
+  const { t } = useI18n();
+  const booted = useBootReady();
+  const h = t.hero;
+  const sectionRef = useRef(null);
+  const stageRef = useRef(null);
+  const inView = useRef(true);
+  // typed characters, each with a stable id so deletions animate out one by one
+  const [chars, setChars] = useState([]);
+  const charId = useRef(0);
+  const [down, setDown] = useState(() => new Set());
+  const [egg, setEgg] = useState(null);
+  const [touch, setTouch] = useState(false);
 
-    // Parallax effect for background elements
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
+  useEffect(() => {
+    const mq = window.matchMedia('(hover: none)');
+    const update = () => setTouch(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
 
-    const parallaxX = useTransform(mouseX, [-1, 1], [-20, 20]);
-    const parallaxY = useTransform(mouseY, [-1, 1], [-20, 20]);
+  // scroll-out: tilt the keyboard away as the hero leaves
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] });
+  // (skipped on touch: a WebGL frame can't stay locked to a finger-driven scroll, it visibly lags)
+  const coarse = useRef(typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches);
+  useMotionValueEvent(scrollYProgress, 'change', (p) => { if (!coarse.current) stageRef.current?.setScrollProgress(p); });
 
-    useEffect(() => {
-        if (isMobile) return;
+  useEffect(() => {
+    const el = sectionRef.current;
+    const io = new IntersectionObserver(([e]) => { inView.current = e.isIntersecting; }, { threshold: 0.25 });
+    if (el) io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
-        const handleMouseMove = (e) => {
-            const { clientX, clientY } = e;
-            const { innerWidth, innerHeight } = window;
-            
-            mouseX.set((clientX / innerWidth) * 2 - 1);
-            mouseY.set((clientY / innerHeight) * 2 - 1);
+  // typed text → easter eggs (side effects live here, never inside a state updater)
+  const bufferRef = useRef('');
+  const rgbRef = useRef(false);
+  const [rgb, setRgb] = useState(false);
+  const restoreGravity = useRef(null);
+  const [pipeline, setPipeline] = useState(-1);
+  const deployTimers = useRef([]);
+
+  // "deploy": build → tests → deploy checklist, then the caps lift off
+  const runDeploy = () => {
+    deployTimers.current.forEach(window.clearTimeout);
+    const at = (ms, fn) => deployTimers.current.push(window.setTimeout(fn, ms));
+    setPipeline(0);
+    at(450, () => setPipeline(1));
+    at(900, () => setPipeline(2));
+    at(1350, () => {
+      setPipeline(3);
+      const stage = stageRef.current;
+      if (!stage) return;
+      stage.launch();
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) exhaust(() => stage.keyScreenPoints());
+    });
+    at(4200, () => setPipeline(-1));
+  };
+  useEffect(() => () => deployTimers.current.forEach(window.clearTimeout), []);
+
+  // "poker": polaroid of the tournament win + a royal flush dealt on the keys
+  const [polaroid, setPolaroid] = useState(false);
+  const pokerRef = useRef(false);
+  const polaroidTimer = useRef(0);
+  useEffect(() => () => window.clearTimeout(polaroidTimer.current), []);
+  useEffect(() => {
+    if (!polaroid) return undefined;
+    const onKey = (e) => e.key === 'Escape' && setPolaroid(false);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [polaroid]);
+
+  // "curbas": full-screen shout
+  const [shout, setShout] = useState(null);
+  const shoutTimers = useRef([]);
+
+  // "teste": a JUnit run where every key is a test case — press, pass, glow green
+  const [testRun, setTestRun] = useState(null);
+  const testTimers = useRef([]);
+  const runTests = () => {
+    testTimers.current.forEach(window.clearTimeout);
+    const at = (ms, fn) => testTimers.current.push(window.setTimeout(fn, ms));
+    const pt = t.htmlLang !== 'en';
+    const tests = NAME_KEYS.map((k, i) => ({
+      name: pt ? `tecla${k.legend}_deveAfundarEVoltar_${i + 1}` : `key${k.legend}_shouldPressAndReturn_${i + 1}`,
+      ms: 3 + Math.floor(Math.random() * 14),
+      status: 'queued',
+    }));
+    const setStatus = (i, status) => setTestRun((r) => r && {
+      ...r, tests: r.tests.map((x, xi) => (xi === i ? { ...x, status } : x)),
+    });
+    setTestRun({ className: pt ? 'TecladoVargasTest' : 'VargasKeyboardTest', tests, done: false, summary: '' });
+    const STEP = 380;
+    tests.forEach((_, i) => {
+      at(350 + i * STEP, () => {
+        setStatus(i, 'running');
+        stageRef.current?.tap(i);
+      });
+      at(350 + i * STEP + 220, () => {
+        setStatus(i, 'passed');
+        stageRef.current?.flash(i);
+      });
+    });
+    const end = 350 + tests.length * STEP + 150;
+    at(end, () => {
+      const total = tests.reduce((s, x) => s + x.ms, 0);
+      setTestRun((r) => r && { ...r, done: true, summary: `Tests run: ${tests.length}, Failures: 0 · ${total} ms` });
+      stageRef.current?.wave();
+      setEgg('teste');
+    });
+    at(end + 3200, () => setTestRun(null));
+  };
+  useEffect(() => () => {
+    testTimers.current.forEach(window.clearTimeout);
+    shoutTimers.current.forEach(window.clearTimeout);
+  }, []);
+
+  // "rgb": accent elements cycle hue via a CSS animation (compositor-friendly, no per-frame JS)
+  useEffect(() => {
+    const root = document.documentElement;
+    // negative delay puts the CSS cycle in phase with performance.now(), which the 3D caps use
+    root.style.animationDelay = rgb ? `-${(performance.now() % 6000) / 1000}s` : '';
+    root.classList.toggle('is-rgb', rgb);
+    return () => root.classList.remove('is-rgb');
+  }, [rgb]);
+  const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const typeLetter = (letter) => {
+    const next = (bufferRef.current + letter).slice(-14);
+    bufferRef.current = next;
+    const id = charId.current++;
+    setChars((prev) => [...prev, { id, ch: letter }].slice(-14));
+    const word = EGG_WORDS.find((w) => next.endsWith(w));
+    if (!word) return;
+    markFound(word);
+    const stage = stageRef.current;
+    switch (word) {
+      case 'vargas':
+        stage?.wave();
+        setEgg('vargas');
+        break;
+      case 'segredo':
+      case 'secret':
+        if (!reduced()) {
+          glitch();
+          stage?.explode();
+        }
+        setEgg('segredo');
+        break;
+      case 'rgb': {
+        rgbRef.current = !rgbRef.current;
+        stage?.setRgb(rgbRef.current);
+        setRgb(rgbRef.current);
+        setEgg(rgbRef.current ? 'rgbOn' : 'rgbOff');
+        break;
+      }
+      case 'gravidade':
+      case 'gravity':
+        if (restoreGravity.current) {
+          restoreGravity.current();
+          restoreGravity.current = null;
+          setEgg('gravityOff');
+        } else {
+          setEgg('gravityOn');
+          // let the message render first so it falls too
+          window.setTimeout(() => {
+            restoreGravity.current = reduced() ? () => {} : gravity();
+            // phones have no Esc: the next tap anywhere tidies up
+            if (touch) {
+              const onTap = () => {
+                if (!restoreGravity.current) return;
+                restoreGravity.current();
+                restoreGravity.current = null;
+                setEgg('gravityOff');
+              };
+              window.setTimeout(() => window.addEventListener('pointerdown', onTap, { once: true }), 400);
+            }
+          }, 60);
+        }
+        break;
+      case 'deploy':
+        runDeploy();
+        setEgg('deploy');
+        break;
+      case 'teste':
+      case 'junit':
+        runTests();
+        setEgg('testeRunning');
+        break;
+      case 'poker': {
+        pokerRef.current = !pokerRef.current;
+        stage?.setPoker(pokerRef.current);
+        setEgg(pokerRef.current ? 'poker' : 'pokerOff');
+        if (!pokerRef.current) { setPolaroid(false); break; }
+        // preload so the polaroid never drops in empty
+        const img = new Image();
+        img.src = POKER_PHOTO;
+        const show = () => {
+          setPolaroid(true);
+          window.clearTimeout(polaroidTimer.current);
+          polaroidTimer.current = window.setTimeout(() => setPolaroid(false), 7000);
         };
+        img.decode().then(show, show);
+        break;
+      }
+      case 'curbas':
+        shoutTimers.current.forEach(window.clearTimeout);
+        setShout(null);
+        shoutTimers.current = [
+          window.setTimeout(() => setShout('meu amigãozão.'), 30),
+          window.setTimeout(() => setShout(null), 3200),
+        ];
+        stage?.wave();
+        setEgg('curbas');
+        break;
+      case 'ana':
+        if (!reduced()) hearts();
+        setEgg('ana');
+        break;
+      case 'sagrav': {
+        const flipped = document.documentElement.classList.toggle('is-flipped');
+        setEgg(flipped ? 'sagravOn' : 'sagravOff');
+        break;
+      }
+      case 'joao':
+        stage?.wave();
+        if (!reduced()) keycapRain(RAIN_LABELS);
+        setEgg('joao');
+        break;
+      default:
+    }
+  };
+  const typeRef = useRef(typeLetter);
+  typeRef.current = typeLetter;
 
-        window.addEventListener('mousemove', handleMouseMove);
-        return () => window.removeEventListener('mousemove', handleMouseMove);
-    }, [isMobile, mouseX, mouseY]);
+  // ---- on-screen keyboard (touch) -------------------------------------------------
+  const softInputRef = useRef(null);
+  const [softOpen, setSoftOpen] = useState(false);
+  const openSoftKeyboard = () => {
+    const input = softInputRef.current;
+    if (!input) return;
+    input.value = ' ';
+    // must run inside the tap handler, or iOS refuses to show the keyboard
+    input.focus({ preventScroll: true });
+    input.setSelectionRange(1, 1);
+  };
+  const onSoftInput = (e) => {
+    const input = e.currentTarget;
+    const value = input.value;
+    if (value.length === 0) {
+      backspace(); // the sentinel space was deleted
+    } else {
+      for (const raw of value.slice(1)) {
+        const ch = raw.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+        if (!/^[a-z]$/.test(ch)) continue;
+        stageRef.current?.keyDown(ch);
+        typeRef.current(ch);
+        window.setTimeout(() => stageRef.current?.keyUp(ch), 110);
+      }
+    }
+    input.value = ' ';
+    input.setSelectionRange(1, 1);
+  };
 
-    const scrollToWork = () => {
-        document.querySelector('#work')?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
+  // Commands clicked in the header notebook are "typed" for the visitor, key by key.
+  useEffect(() => {
+    let timers = [];
+    const onRun = (e) => {
+      const word = String(e.detail || '');
+      timers.forEach(window.clearTimeout);
+      timers = [];
+      const start = () => {
+        bufferRef.current = '';
+        setChars([]);
+        setEgg(null);
+        [...word].forEach((ch, i) => {
+          timers.push(window.setTimeout(() => {
+            stageRef.current?.keyDown(ch);
+            typeRef.current(ch);
+          }, i * 110));
+          timers.push(window.setTimeout(() => stageRef.current?.keyUp(ch), i * 110 + 80));
         });
+      };
+      if (window.scrollY > 40) {
+        scrollToId('top');
+        timers.push(window.setTimeout(start, 900));
+      } else start();
     };
-
-    const downloadCV = () => {
-        const link = document.createElement('a');
-        link.href = '/assets/Curriculo.pdf';
-        link.download = 'curriculo.pdf';
-        link.click();
+    window.addEventListener('egg:run', onRun);
+    return () => {
+      window.removeEventListener('egg:run', onRun);
+      timers.forEach(window.clearTimeout);
     };
+  }, []);
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.12,
-                delayChildren: 0.2
-            }
-        }
+  const backspace = () => {
+    const next = bufferRef.current.slice(0, -1);
+    bufferRef.current = next;
+    setChars((prev) => prev.slice(0, -1));
+    if (!next) setEgg(null);
+  };
+
+  // Esc always undoes the eggs that change the page (upside down, gravity)
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      if (document.documentElement.classList.contains('is-flipped')) {
+        document.documentElement.classList.remove('is-flipped');
+        setEgg('sagravOff');
+      }
+      if (restoreGravity.current) {
+        restoreGravity.current();
+        restoreGravity.current = null;
+        setEgg('gravityOff');
+      }
+      if (pokerRef.current) {
+        pokerRef.current = false;
+        stageRef.current?.setPoker(false);
+        setEgg('pokerOff');
+      }
     };
-
-    const itemVariants = shouldReduceMotion ? {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1, transition: { duration: 0.3 } }
-    } : {
-        hidden: { opacity: 0, y: 30 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: {
-                duration: 0.8,
-                ease: [0.25, 0.4, 0.25, 1]
-            }
-        }
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.documentElement.classList.remove('is-flipped');
     };
+  }, []);
 
-    const headingContainerVariants = {
-        hidden: {},
-        visible: {
-            transition: {
-                staggerChildren: 0.15,
-                delayChildren: 0.4
-            }
-        }
+  // physical keyboard → 3D keys
+  useEffect(() => {
+    const onDown = (e) => {
+      if (!inView.current || isTypingTarget(e.target)) return;
+      if (e.key === 'Backspace' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        backspace();
+        return;
+      }
+      const letter = letterOf(e);
+      if (!letter) return;
+      stageRef.current?.keyDown(letter);
+      setDown((prev) => new Set(prev).add(letter));
+      if (e.repeat) return;
+      typeRef.current(letter);
     };
-
-    const wordVariants = shouldReduceMotion ? {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1, transition: { duration: 0.3 } }
-    } : {
-        hidden: { opacity: 0, y: 20 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: {
-                duration: 0.6,
-                ease: [0.25, 0.4, 0.25, 1]
-            }
-        }
+    const onUp = (e) => {
+      const letter = letterOf(e) ?? e.key?.toLowerCase();
+      stageRef.current?.keyUp(letter);
+      setDown((prev) => {
+        if (!prev.has(letter)) return prev;
+        const next = new Set(prev);
+        next.delete(letter);
+        return next;
+      });
     };
+    const onBlur = () => {
+      down.forEach((l) => stageRef.current?.keyUp(l));
+      setDown(new Set());
+    };
+    window.addEventListener('keydown', onDown);
+    window.addEventListener('keyup', onUp);
+    window.addEventListener('blur', onBlur);
+    return () => {
+      window.removeEventListener('keydown', onDown);
+      window.removeEventListener('keyup', onUp);
+      window.removeEventListener('blur', onBlur);
+    };
+  }, [down]);
 
-    return (
-        <section id="home" className="hero-section">
-            <div className="container">
-                <motion.div
-                    className="hero-grid"
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
+  const onActivate = (i) => typeRef.current(NAME_KEYS[i].match[0]);
+
+  const fallback = (
+    <div className="hero-keys-fallback" aria-hidden="true">
+      {NAME_KEYS.map((k, i) => (
+        <span key={i} className={`cap ${k.accent ? 'cap--accent' : ''}`}>{k.legend}</span>
+      ))}
+    </div>
+  );
+
+  return (
+    <section id="top" ref={sectionRef} className="hero" aria-labelledby="hero-title">
+      <TestRunner run={testRun} />
+      <Shout text={shout} />
+      <Polaroid open={polaroid} src={POKER_PHOTO} alt={h.eggs.pokerAlt} caption={h.eggs.pokerCaption} onClose={() => setPolaroid(false)} />
+      {pipeline >= 0 && (
+        <ol className="pipeline mono" aria-label="Pipeline">
+          {h.pipeline.map((label, i) => (
+            <li key={label} className={i < pipeline ? 'is-done' : i === pipeline ? 'is-running' : ''}>
+              <span className="pipeline__icon" aria-hidden="true">{i < pipeline ? '✓' : i === pipeline ? '●' : '○'}</span>
+              {label}
+            </li>
+          ))}
+        </ol>
+      )}
+      <div className="wrap hero__grid">
+        <motion.div className="hero__meta" {...rise(0.05, booted)}>
+          <p className="hero__status">
+            <span className="status-dot" aria-hidden="true" />
+            {h.status}
+          </p>
+          <p className="mono hero__where">
+            <span>{h.role}</span>
+            <span aria-hidden="true">/</span>
+            <span>{h.location}</span>
+          </p>
+        </motion.div>
+
+        <h1 id="hero-title" className="hero__title display">
+          <motion.span className="hero__line" {...rise(0.12, booted)}>{h.titleA}</motion.span>{' '}
+          <motion.span className="hero__line hero__line--b" {...rise(0.22, booted)}>
+            {h.titleB.replace(/\.$/, '')}
+            <span className="hero__dot">.</span>
+          </motion.span>
+        </h1>
+
+        <KeyboardCanvas
+          className="hero__stage"
+          keys={NAME_KEYS}
+          layout="hero"
+          onStage={(s) => { stageRef.current = s; }}
+          onActivate={onActivate}
+          fallback={fallback}
+        />
+
+        <motion.div className="hero__bottom" {...rise(0.5, booted)}>
+          <p className="hero__lede">{h.lede}</p>
+
+          <div className="hero__side">
+            <div className="hero__hint" aria-live="polite">
+              <p className="eyebrow">{touch ? h.touchHint : h.typeHint}</p>
+              {/* whatever the visitor types appears as keycaps, one per letter */}
+              <div className="hero__typed">
+                {chars.length > 0 && (
+                  <span className="visually-hidden">{h.bufferLabel}: {chars.map((c) => c.ch).join('')}</span>
+                )}
+                <span className="hero__typed-keys" aria-hidden="true">
+                  <AnimatePresence initial={false} mode="popLayout">
+                    {chars.map((c) => (
+                      <motion.span
+                        key={c.id}
+                        layout
+                        className={`cap cap--sm hero__typed-key${c.ch === 'v' ? ' cap--accent' : ''}`}
+                        initial={{ opacity: 0, y: -10, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.85 }}
+                        transition={{ duration: 0.2, ease: EASE }}
+                      >
+                        {c.ch.toUpperCase()}
+                      </motion.span>
+                    ))}
+                  </AnimatePresence>
+                  <motion.span layout className="hero__caret" />
+                </span>
+                {/* Touch screens have no physical keyboard: this real (but invisible) input
+                    summons the on-screen one. A sentinel space lets Backspace be detected
+                    on every mobile keyboard (some never fire key events). */}
+                <input
+                  ref={softInputRef}
+                  className="hero__soft-input"
+                  type="text"
+                  defaultValue=" "
+                  aria-label={h.typeLabel}
+                  autoComplete="off"
+                  autoCorrect="off"
+                  autoCapitalize="off"
+                  spellCheck={false}
+                  enterKeyHint="done"
+                  onInput={onSoftInput}
+                  onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
+                  onFocus={() => setSoftOpen(true)}
+                  onBlur={() => setSoftOpen(false)}
+                />
+              </div>
+              {touch && (
+                <button
+                  type="button"
+                  className={`hero__kbd-btn${softOpen ? ' is-open' : ''}`}
+                  onPointerDown={(e) => { if (softOpen) e.preventDefault(); }}
+                  onClick={() => (softOpen ? softInputRef.current?.blur() : openSoftKeyboard())}
                 >
-                    {/* Main Content */}
-                    <div className="hero-content">
-                        {/* Label superior minimalista */}
-                        <motion.div variants={itemVariants} className="hero-label">
-                            <span className="status-dot"></span>
-                            <span className="label-text mono">Available for opportunities</span>
-                        </motion.div>
-
-                        {/* Heading statement - staggered por palavra */}
-                        <motion.h1 
-                            className="hero-heading"
-                            initial="hidden"
-                            animate="visible"
-                            variants={headingContainerVariants}
-                        >
-                            <motion.span variants={wordVariants}>Designer</motion.span>{' '}
-                            <motion.span variants={wordVariants}>&</motion.span>{' '}
-                            <motion.span variants={wordVariants}>Developer</motion.span>
-                            <br />
-                            <motion.span variants={wordVariants}>blending</motion.span>{' '}
-                            <motion.span variants={wordVariants}>creativity</motion.span>
-                            <br />
-                            <motion.span variants={wordVariants}>with</motion.span>{' '}
-                            <motion.span variants={wordVariants}>code</motion.span>
-                        </motion.h1>
-
-                        {/* Subtitle com nome */}
-                        <motion.p variants={itemVariants} className="hero-subtitle">
-                            João Vargas
-                        </motion.p>
-
-                        {/* CTA simplificado - apenas 1 principal */}
-                        <motion.div variants={itemVariants} className="hero-actions">
-                            <motion.button
-                                className="btn-primary-minimal"
-                                onClick={scrollToWork}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                            >
-                                <span>View work</span>
-                                <ArrowRight size={18} strokeWidth={2} />
-                            </motion.button>
-                            <motion.a
-                                href="/assets/Curriculo.pdf"
-                                download="curriculo.pdf"
-                                className="link-secondary"
-                                whileHover={{ x: 4 }}
-                            >
-                                Download CV →
-                            </motion.a>
-                        </motion.div>
-
-                        {/* Mobile-only marquee — scrolling skill strip */}
-                        {isMobile && (
-                            <motion.div
-                                className="hero-marquee"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 1.4, duration: 0.6 }}
-                                aria-hidden="true"
-                            >
-                                <div className="marquee-track">
-                                    {Array.from({ length: 2 }).map((_, i) => (
-                                        <div className="marquee-group" key={i}>
-                                            <span className="marquee-item">React</span>
-                                            <span className="marquee-dot">●</span>
-                                            <span className="marquee-item">TypeScript</span>
-                                            <span className="marquee-dot">●</span>
-                                            <span className="marquee-item">Node.js</span>
-                                            <span className="marquee-dot">●</span>
-                                            <span className="marquee-item">Java</span>
-                                            <span className="marquee-dot">●</span>
-                                            <span className="marquee-item">Spring Boot</span>
-                                            <span className="marquee-dot">●</span>
-                                            <span className="marquee-item">UI / UX</span>
-                                            <span className="marquee-dot">●</span>
-                                            <span className="marquee-item">Design Systems</span>
-                                            <span className="marquee-dot">●</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </motion.div>
-                        )}
-
-                    </div>
-                </motion.div>
-
+                  <Keyboard size={16} strokeWidth={1.8} aria-hidden="true" />
+                  {softOpen ? h.typeClose : h.typeOpen}
+                </button>
+              )}
+              <AnimatePresence mode="wait">
+                {egg && (
+                  <motion.div
+                    key={egg}
+                    className="hero__egg-slot"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.22, ease: EASE }}
+                  >
+                    {egg === 'vargas' && (
+                      <a className="hero__egg" href="#contato" onClick={(e) => { e.preventDefault(); scrollToId('contato'); }}>
+                        {h.eggs.vargas}
+                      </a>
+                    )}
+                    {egg === 'segredo' && (
+                      <p className="hero__egg hero__egg--note hero__egg--secret"><ScrambleText text={h.eggs.segredo} /></p>
+                    )}
+                    {egg !== 'vargas' && egg !== 'segredo' && <p className="hero__egg hero__egg--note">{h.eggs[egg]}</p>}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
-            {/* Background Elements */}
-            <div className="hero-bg">
-                {/* Noise texture sutil */}
-                <div className="bg-noise"></div>
+            <div className="hero__actions">
+              <a
+                href="#trabalho"
+                className="btn btn--primary"
+                onClick={(e) => { e.preventDefault(); scrollToId('trabalho'); }}
+              >
+                {h.ctaWork}
+                <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
+              </a>
+              <a href={LINKS.cv} download="Curriculo-Joao-Vargas.pdf" className="btn btn--ghost">
+                <Download size={17} strokeWidth={2} aria-hidden="true" />
+                {h.ctaCv}
+                <span className="mono btn__meta">{h.ctaCvMeta}</span>
+              </a>
             </div>
-        </section>
-    );
+          </div>
+        </motion.div>
+
+      </div>
+    </section>
+  );
 };
 
 export default Hero;

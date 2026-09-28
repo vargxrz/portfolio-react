@@ -1,132 +1,142 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
-import AnimatedThemeToggler from './ui/animated-theme-toggler';
-import { useTheme } from '../contexts/ThemeContext';
-import "./Header.css";
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Menu, Moon, Sun, X } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext.jsx';
+import { useI18n } from '../contexts/I18nContext.jsx';
+import { scrollToId } from '../hooks/useSmoothScroll.js';
+import CommandNotebook from './CommandNotebook.jsx';
+import LogoMark from './LogoMark.jsx';
+import './Header.css';
 
 const Header = () => {
-    const [menuOpen, setMenuOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
-    const [logoRotated, setLogoRotated] = useState(false); // Toggle fixo do click
-    const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
+  const { t, toggleLang } = useI18n();
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(null);
 
-    const toggleMenu = () => setMenuOpen(!menuOpen);
-    const closeMenu = () => setMenuOpen(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    const navLinks = [
-        { href: "#home", label: "Home", number: "01" },
-        { href: "#work", label: "Work", number: "02" },
-        { href: "#contact", label: "Contact", number: "03" }
-    ];
-
-    const scrollToTop = () => {
-        // Toggle fixo da rotação
-        setLogoRotated(!logoRotated);
-        
-        // Scroll to top
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        closeMenu();
-    };
-
-    const handleNavClick = (e, href) => {
-        e.preventDefault();
-        const element = document.querySelector(href);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-        closeMenu();
-    };
-
-    return (
-        <motion.header 
-            className={`header ${scrolled ? 'scrolled' : ''} ${menuOpen ? 'menu-open' : ''}`}
-            initial={{ y: -100 }}
-            animate={{ y: 0 }}
-            transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
-        >
-            <div className="container">
-                <div className="header-content">
-                    <button 
-                        className="logo" 
-                        onClick={scrollToTop}
-                        aria-label="Go to top"
-                    >
-                        <span className={`logo-mark ${logoRotated ? 'rotated' : ''}`}>V</span>
-                    </button>
-
-                    <nav className="desktop-nav">
-                        {navLinks.map((link, index) => (
-                            <a
-                                key={link.href}
-                                href={link.href}
-                                className="nav-link"
-                                onClick={(e) => handleNavClick(e, link.href)}
-                            >
-                                <span className="nav-number mono">{link.number}</span>
-                                <span className="nav-label">{link.label}</span>
-                            </a>
-                        ))}
-                        <AnimatedThemeToggler theme={theme} onToggle={toggleTheme} />
-                    </nav>
-
-                    <button
-                        className={`mobile-toggle ${menuOpen ? 'open' : ''}`}
-                        onClick={toggleMenu}
-                        aria-label="Toggle menu"
-                    >
-                        {menuOpen ? <X size={24} strokeWidth={2} /> : <Menu size={24} strokeWidth={2} />}
-                    </button>
-                </div>
-
-                <AnimatePresence>
-                    {menuOpen && (
-                        <motion.div 
-                            className="mobile-menu"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
-                        >
-                            <nav className="mobile-nav">
-                                {navLinks.map((link, index) => (
-                                    <motion.a
-                                        key={link.href}
-                                        href={link.href}
-                                        className="mobile-nav-link"
-                                        onClick={(e) => handleNavClick(e, link.href)}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: index * 0.1, duration: 0.4 }}
-                                    >
-                                        <span className="nav-number mono">{link.number}</span>
-                                        <span className="nav-label">{link.label}</span>
-                                    </motion.a>
-                                ))}
-                                <div style={{ 
-                                    display: 'flex', 
-                                    justifyContent: 'center', 
-                                    paddingTop: 'var(--spacing-lg)',
-                                    borderTop: '1px solid var(--border-light)'
-                                }}>
-                                    <AnimatedThemeToggler theme={theme} onToggle={toggleTheme} />
-                                </div>
-                            </nav>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
-        </motion.header>
+  // highlight the section currently in view
+  useEffect(() => {
+    const ids = t.nav.map((n) => n.id);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        });
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
     );
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, [t]);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const onKey = (e) => e.key === 'Escape' && setOpen(false);
+    window.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [open]);
+
+  const go = (e, id) => {
+    e.preventDefault();
+    setOpen(false);
+    scrollToId(id);
+  };
+
+  const ThemeIcon = theme === 'dark' ? Sun : Moon;
+
+  return (
+    <header className={`site-header${scrolled ? ' is-scrolled' : ''}${open ? ' is-open' : ''}`}>
+      <div className="wrap site-header__inner">
+        <a href="#top" className="brand" onClick={(e) => go(e, 'top')} aria-label="João Vargas">
+          <LogoMark />
+        </a>
+
+        <nav className="site-nav" aria-label="Principal">
+          <ul>
+            {t.nav.map((item) => (
+              <li key={item.id}>
+                <a
+                  href={`#${item.id}`}
+                  onClick={(e) => go(e, item.id)}
+                  className={active === item.id ? 'is-active' : undefined}
+                  aria-current={active === item.id ? 'true' : undefined}
+                  aria-keyshortcuts={item.key}
+                >
+                  <span className="cap cap--sm" aria-hidden="true">{item.key}</span>
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="site-header__tools">
+          <button type="button" className="tool-btn tool-btn--lang" onClick={toggleLang} aria-label={t.langSwitch}>
+            {t.langShort}
+          </button>
+          <CommandNotebook />
+          <button
+            type="button"
+            className="tool-btn"
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? t.themeToLight : t.themeToDark}
+          >
+            <ThemeIcon size={18} strokeWidth={1.8} />
+          </button>
+          <button
+            type="button"
+            className="tool-btn menu-btn"
+            onClick={() => setOpen((o) => !o)}
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            aria-label={open ? t.close : t.menu}
+          >
+            {open ? <X size={20} strokeWidth={1.8} /> : <Menu size={20} strokeWidth={1.8} />}
+          </button>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {open && (
+          <motion.nav
+            id="mobile-nav"
+            className="mobile-nav"
+            aria-label="Principal"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <ul className="wrap">
+              {t.nav.map((item, i) => (
+                <li key={item.id}>
+                  <a href={`#${item.id}`} onClick={(e) => go(e, item.id)}>
+                    <span className="mono mobile-nav__index">0{i + 1}</span>
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </motion.nav>
+        )}
+      </AnimatePresence>
+    </header>
+  );
 };
 
 export default Header;
