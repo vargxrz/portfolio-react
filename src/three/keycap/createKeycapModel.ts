@@ -170,11 +170,15 @@ function buildKeycapGeometry(widthU: number): THREE.BufferGeometry {
     const topWeight = ri < filletStart ? 0 : ri < filletStart + FILLET_RINGS
       ? Math.sin(((ri - filletStart + 1) / FILLET_RINGS) * (Math.PI / 2))
       : 1;
+    // walls: u runs by arc length, so a patterned skin (e.g. grass blocks) keeps square pixels
+    const along = [0];
+    ring.points.forEach((p, pi) => pi > 0 && along.push(along[pi - 1] + p.distanceTo(ring.points[pi - 1])));
+    const perimeter = along[M - 1] + ring.points[M - 1].distanceTo(ring.points[0]);
     ring.points.forEach((p, pi) => {
       const y = ring.y - sag(p.x) * topWeight;
       positions.push(p.x, y, p.y);
       if (isTop) uvs.push(topU(p.x), topV(p.y));
-      else uvs.push(pi / M, 0.02 + 0.44 * (ring.y / wallTopH));
+      else uvs.push(along[pi] / perimeter, 0.02 + 0.44 * (ring.y / wallTopH));
       const ao = isTop ? 1 : lerp(0.84, 0.95, ring.y / wallTopH);
       colors.push(ao, ao, ao);
     });
@@ -325,7 +329,7 @@ function pbtGrain(): THREE.CanvasTexture {
   return grainTexture;
 }
 
-function legendTexture(opts: Required<Pick<KeycapOptions, 'legend' | 'fontFamily' | 'textureSize'>> & {
+export function legendTexture(opts: Required<Pick<KeycapOptions, 'legend' | 'fontFamily' | 'textureSize'>> & {
   subLegend?: string; colorway: KeycapColorway; widthU: number;
 }): THREE.CanvasTexture {
   const size = opts.textureSize;

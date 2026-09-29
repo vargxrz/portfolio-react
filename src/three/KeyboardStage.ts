@@ -1,6 +1,7 @@
 // Real-time stage for the reconstructed keycaps: renderer, camera, lights, pointer
 // + keyboard press interaction, intro "seating" animation and theme colourways.
 import * as THREE from 'three';
+import { grassBlockTexture } from './keycap/grassBlock';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import {
   createKeycapModel,
@@ -74,13 +75,17 @@ type KeyEntry = {
   rgbLight: THREE.PointLight | null;
   /** "teste": 1 → 0 green glow after the key's test passes. */
   flash: number;
-  /** "poker": card legend for this key (built on first use). */
-  pokerMap: THREE.Texture | null;
+  /** "poker"/"renan" skins: alternate legends for this key, built on first use. */
+  skinMaps: Partial<Record<CapSkin, THREE.Texture>>;
   /** "poker": seconds into the flip animation (negative = waiting), null = idle. */
   flip: number | null;
 };
 
 const POKER_RANKS = ['♣', '10', 'J', 'Q', 'K', 'A'];
+const RIO_LEGENDS = ['R', 'J', '2', '0', '2', '6'];
+
+/** Alternate cap faces an easter egg can flip the row into. */
+export type CapSkin = 'poker' | 'rio';
 
 const rnd = (a: number, b: number) => a + Math.random() * (b - a);
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
@@ -106,8 +111,8 @@ export class KeyboardStage {
   private scroll = 0;
   private waveTime = -1;
   private explodeTime = -1;
-  /** "poker": caps show playing-card legends (♣ 10 J Q K A) instead of letters */
-  private pokerOn = false;
+  /** active cap skin: "poker" (♣ 10 J Q K A cards) or "rio" (R J 2 0 2 6 grass blocks) */
+  private skin: CapSkin | null = null;
   private rgbOn = false;
   private observer: IntersectionObserver;
   private resizeObserver: ResizeObserver;
@@ -163,7 +168,7 @@ export class KeyboardStage {
     for (const k of this.keys) {
       this.rig.remove(k.object);
       disposeObject(k.object);
-      k.pokerMap?.dispose();
+      Object.values(k.skinMaps).forEach((t) => t?.dispose());
     }
     this.keys = [];
     if (this.caseMesh) {
@@ -209,7 +214,7 @@ export class KeyboardStage {
         capSpin: new THREE.Vector3(-0.18, rnd(-0.35, 0.35), 0),
         rgbLight: null,
         flash: 0,
-        pokerMap: null,
+        skinMaps: {},
         flip: null,
       };
       runtime.pressNode.position.y = runtime.restY + entry.drop;
@@ -233,11 +238,11 @@ export class KeyboardStage {
     this.caseMesh.position.set(centre.x, -0.42, centre.z);
     this.caseMesh.receiveShadow = true;
     this.rig.add(this.caseMesh);
-    // theme rebuild while "poker" is on: new caps come up as cards straight away
-    if (this.pokerOn) {
+    // theme rebuild while a skin is on: new caps come up already skinned
+    if (this.skin) {
+      const skin = this.skin;
       this.keys.forEach((k, i) => {
-        this.ensurePokerMap(k, i);
-        (k.runtime.capMesh.material as THREE.MeshPhysicalMaterial).map = k.pokerMap;
+        (k.runtime.capMesh.material as THREE.MeshPhysicalMaterial).map = this.ensureSkinMap(k, i, skin);
       });
     }
 
@@ -321,29 +326,46 @@ export class KeyboardStage {
   }
 
   /**
-   * "poker": every cap spins a full turn (in a wave) and lands as a playing card —
-   * ♣ on the accent key, then 10 J Q K A of clubs: a royal flush across the row.
-   * Calling it with false spins them back to V A R G A S.
+   * Every cap spins a full turn (in a wave) and lands wearing a new face:
+   * "poker" → ♣ 10 J Q K A of clubs, "rio" → Minecraft grass blocks reading R J 2 0 2 6.
+   * null spins them back to V A R G A S.
    */
-  setPoker(on: boolean) {
-    this.pokerOn = on;
+  setSkin(skin: CapSkin | null) {
+    this.skin = skin;
     this.keys.forEach((k, i) => {
-      this.ensurePokerMap(k, i);
+      if (skin) this.ensureSkinMap(k, i, skin);
       k.flip = -i * 0.09;
     });
     this.requestFrame();
   }
 
-  private ensurePokerMap(k: KeyEntry, i: number) {
-    if (k.pokerMap) return;
-    const rank = POKER_RANKS[i % POKER_RANKS.length];
-    k.pokerMap = cardLegendTexture({
-      rank,
-      corner: rank === '♣' ? 'V' : undefined,
-      colorway: colorwayFor(this.opts.theme, k.spec.accent),
-      fontFamily: this.opts.fontFamily,
-    });
-    this.renderer.initTexture(k.pokerMap); // upload now, not mid-spin
+  setPoker(on: boolean) {
+    this.setSkin(on ? 'poker' : null);
+  }
+
+  /** Current cap skin, so eggs can tell whether theirs is the one showing. */
+  getSkin(): CapSkin | null {
+    return this.skin;
+  }
+
+  private ensureSkinMap(k: KeyEntry, i: number, skin: CapSkin): THREE.Texture {
+    const existing = k.skinMaps[skin];
+    if (existing) return existing;
+    let tex: THREE.Texture;
+    if (skin === 'rio') {
+      tex = grassBlockTexture(RIO_LEGENDS[i % RIO_LEGENDS.length], i + 1);
+    } else {
+      const rank = POKER_RANKS[i % POKER_RANKS.length];
+      tex = cardLegendTexture({
+        rank,
+        corner: rank === '♣' ? 'V' : undefined,
+        colorway: colorwayFor(this.opts.theme, k.spec.accent),
+        fontFamily: this.opts.fontFamily,
+      });
+    }
+    k.skinMaps[skin] = tex;
+    this.renderer.initTexture(tex); // upload now, not mid-spin
+    return tex;
   }
 
   /** Release a held intro: caps drop onto their switches one after another. */
@@ -443,7 +465,7 @@ export class KeyboardStage {
     window.removeEventListener('pointerup', this.onPointerUp);
     window.removeEventListener('pointermove', this.onWindowPointer);
     document.removeEventListener('visibilitychange', this.onVisibility);
-    for (const k of this.keys) { disposeObject(k.object); k.pokerMap?.dispose(); }
+    for (const k of this.keys) { disposeObject(k.object); Object.values(k.skinMaps).forEach((t) => t?.dispose()); }
     if (this.caseMesh) disposeObject(this.caseMesh);
     this.envTexture.dispose();
     this.renderer.dispose();
@@ -666,8 +688,8 @@ export class KeyboardStage {
       const { tintMap, baseMap, capMesh } = k.runtime;
       if (!tintMap || k.flip !== null) continue;
       const mat = capMesh.material as THREE.MeshPhysicalMaterial;
-      const rest = this.pokerOn && k.pokerMap ? k.pokerMap : baseMap;
-      if (pageRgb && !this.pokerOn) {
+      const rest = (this.skin && k.skinMaps[this.skin]) || baseMap;
+      if (pageRgb && !this.skin) {
         if (mat.map !== tintMap) mat.map = tintMap;
         const hue = (((performance.now() / 6000) * 360 + 18) % 360) / 360;
         mat.color.setHSL(hue, 0.95, this.opts.theme === 'dark' ? 0.5 : 0.42);
@@ -698,7 +720,7 @@ export class KeyboardStage {
       busy = true;
     }
 
-    // "poker": each cap spins one full turn around X; the legend swaps while it faces away
+    // skins: each cap spins one full turn around X; the face swaps while it looks away
     for (const k of this.keys) {
       if (k.flip === null) continue;
       k.flip += dt;
@@ -709,7 +731,7 @@ export class KeyboardStage {
         node.position.y += Math.sin(Math.PI * p) * 0.32;
         if (p >= 0.5) {
           const mat = k.runtime.capMesh.material as THREE.MeshPhysicalMaterial;
-          const want = this.pokerOn && k.pokerMap ? k.pokerMap : k.runtime.baseMap;
+          const want = (this.skin && k.skinMaps[this.skin]) || k.runtime.baseMap;
           if (mat.map !== want) { mat.map = want; mat.color.set('#ffffff'); }
         }
       }

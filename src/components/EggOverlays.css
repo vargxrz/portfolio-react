@@ -83,12 +83,10 @@
   font-weight: 500;
 }
 
-/* ------------------------------------------------ "poker": polaroid */
+/* ------------------------------------------------ "poker" / "renan": polaroids */
 
 .polaroid {
   position: fixed;
-  bottom: clamp(16px, 4vh, 40px);
-  left: clamp(16px, 5vw, 80px);
   z-index: 82;
   width: min(260px, 56vw);
   margin: 0;
@@ -99,7 +97,18 @@
     0 2px 4px rgba(0, 0, 0, 0.2),
     0 22px 50px rgba(0, 0, 0, 0.45);
   cursor: pointer;
+}
+
+.polaroid--bl {
+  bottom: clamp(16px, 4vh, 40px);
+  left: clamp(16px, 5vw, 80px);
   transform-origin: 50% 100%;
+}
+
+.polaroid--tr {
+  top: calc(var(--header-h) + clamp(16px, 3vh, 32px));
+  right: clamp(16px, 5vw, 80px);
+  transform-origin: 50% 0;
 }
 
 .polaroid img {
@@ -135,20 +144,29 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
-/* phones: sit over the title instead, keeping the 3D cards and the Type button free */
+/* phones: smaller prints; the first moves up beside the second so the 3D keys
+   and the Type button stay free */
 @media (max-width: 640px) {
   .polaroid {
+    width: min(170px, 44vw);
+    padding: 8px 8px 0;
+  }
+
+  .polaroid--bl {
     top: calc(var(--header-h) + 14px);
     bottom: auto;
-    left: auto;
-    right: 18px;
-    width: min(200px, 50vw);
-    padding: 9px 9px 0;
+    left: 12px;
+    transform-origin: 50% 0;
+  }
+
+  .polaroid--tr {
+    top: calc(var(--header-h) + 52px);
+    right: 12px;
   }
 
   .polaroid figcaption {
-    padding: 10px 2px 13px;
-    font-size: 0.875rem;
+    padding: 9px 2px 12px;
+    font-size: 0.8125rem;
   }
 }
 

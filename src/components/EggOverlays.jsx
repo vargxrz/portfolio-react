@@ -60,25 +60,38 @@ export const TestRunner = ({ run }) => createPortal(
   document.body,
 );
 
-/** "poker": the winning photo as a polaroid dropped onto the page. Click or Esc closes it. */
-export const Polaroid = ({ open, src, alt, caption, onClose }) => createPortal(
+// each print gets its own corner: first bottom-left, second top-right
+const CORNERS = [
+  { cls: 'bl', rotate: -5, from: 320 },
+  { cls: 'tr', rotate: 5, from: -320 },
+];
+
+/**
+ * "poker" / "renan": photos as polaroids dropped onto the page, one per corner.
+ * `photos` = [{ src, alt, caption, width, height }] or null. Click or Esc closes.
+ */
+export const Polaroids = ({ photos, onClose }) => createPortal(
   <AnimatePresence>
-    {open && (
-      <motion.figure
-        className="polaroid"
-        role="dialog"
-        aria-label={alt}
-        onClick={onClose}
-        initial={{ opacity: 0, y: 320, rotate: 14 }}
-        animate={{ opacity: 1, y: 0, rotate: -5 }}
-        exit={{ opacity: 0, y: 40, rotate: 12, transition: { duration: 0.35, ease: EASE } }}
-        transition={{ type: 'spring', stiffness: 140, damping: 16, mass: 0.9 }}
-      >
-        <span className="polaroid__tape" aria-hidden="true" />
-        <img src={src} alt={alt} width="900" height="1150" />
-        <figcaption>{caption}</figcaption>
-      </motion.figure>
-    )}
+    {photos && photos.map((photo, i) => {
+      const corner = CORNERS[i % CORNERS.length];
+      return (
+        <motion.figure
+          key={photo.src}
+          className={`polaroid polaroid--${corner.cls}`}
+          role="dialog"
+          aria-label={photo.alt}
+          onClick={onClose}
+          initial={{ opacity: 0, y: corner.from, rotate: corner.rotate * 3 }}
+          animate={{ opacity: 1, y: 0, rotate: corner.rotate }}
+          exit={{ opacity: 0, y: corner.from / 8, transition: { duration: 0.35, ease: EASE } }}
+          transition={{ type: 'spring', stiffness: 140, damping: 16, mass: 0.9, delay: i * 0.22 }}
+        >
+          <span className="polaroid__tape" aria-hidden="true" />
+          <img src={photo.src} alt={photo.alt} width={photo.width ?? 900} height={photo.height ?? 1150} />
+          <figcaption>{photo.caption}</figcaption>
+        </motion.figure>
+      );
+    })}
   </AnimatePresence>,
   document.body,
 );

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion';
 import { ArrowRight, Download, Keyboard } from 'lucide-react';
 import KeyboardCanvas from './KeyboardCanvas.jsx';
-import { Polaroid, Shout, TestRunner } from './EggOverlays.jsx';
+import { Polaroids, Shout, TestRunner } from './EggOverlays.jsx';
 import useBootReady from '../hooks/useBootReady.js';
 import { markFound } from '../lib/eggs.js';
 import { useI18n } from '../contexts/I18nContext.jsx';
@@ -14,9 +14,10 @@ import './Hero.css';
 
 // Longest first so a long word never loses to a shorter suffix.
 // ("test" is deliberately absent: it is a prefix of "teste" and would fire twice)
-const EGG_WORDS = ['gravidade', 'segredo', 'gravity', 'vargas', 'sagrav', 'secret', 'deploy', 'curbas', 'poker', 'teste', 'junit', 'joao', 'ana', 'rgb'];
+const EGG_WORDS = ['gravidade', 'segredo', 'gravity', 'vargas', 'sagrav', 'secret', 'deploy', 'curbas', 'poker', 'renan', 'teste', 'junit', 'joao', 'ana', 'rgb'];
 
 const POKER_PHOTO = '/assets/eggs/poker.webp';
+const RIO_PHOTOS = ['/assets/eggs/renan.jpg', '/assets/eggs/arpoador.jpg'];
 
 const SCRAMBLE = '!<>-_\\/[]{}—=+*^?#01';
 
@@ -122,17 +123,37 @@ const Hero = () => {
   };
   useEffect(() => () => deployTimers.current.forEach(window.clearTimeout), []);
 
-  // "poker": polaroid of the tournament win + a royal flush dealt on the keys
-  const [polaroid, setPolaroid] = useState(false);
-  const pokerRef = useRef(false);
-  const polaroidTimer = useRef(0);
-  useEffect(() => () => window.clearTimeout(polaroidTimer.current), []);
+  // "poker" / "renan": the caps flip to a new skin and photos drop in as polaroids
+  const [photos, setPhotos] = useState(null);
+  const skinRef = useRef(null);
+  const photosTimer = useRef(0);
+  useEffect(() => () => window.clearTimeout(photosTimer.current), []);
   useEffect(() => {
-    if (!polaroid) return undefined;
-    const onKey = (e) => e.key === 'Escape' && setPolaroid(false);
+    if (!photos) return undefined;
+    const onKey = (e) => e.key === 'Escape' && setPhotos(null);
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [polaroid]);
+  }, [photos]);
+  // toggles a cap skin; returns true when it was switched on
+  const toggleSkin = (skin, prints) => {
+    const on = skinRef.current !== skin;
+    skinRef.current = on ? skin : null;
+    stageRef.current?.setSkin(skinRef.current);
+    window.clearTimeout(photosTimer.current);
+    setPhotos(null);
+    if (!on) return false;
+    // preload so no polaroid ever drops in empty
+    Promise.allSettled(prints.map((p) => {
+      const img = new Image();
+      img.src = p.src;
+      return img.decode();
+    })).then(() => {
+      if (skinRef.current !== skin) return;
+      setPhotos(prints);
+      photosTimer.current = window.setTimeout(() => setPhotos(null), 8000);
+    });
+    return true;
+  };
 
   // "curbas": full-screen shout
   const [shout, setShout] = useState(null);
@@ -251,19 +272,16 @@ const Hero = () => {
         setEgg('testeRunning');
         break;
       case 'poker': {
-        pokerRef.current = !pokerRef.current;
-        stage?.setPoker(pokerRef.current);
-        setEgg(pokerRef.current ? 'poker' : 'pokerOff');
-        if (!pokerRef.current) { setPolaroid(false); break; }
-        // preload so the polaroid never drops in empty
-        const img = new Image();
-        img.src = POKER_PHOTO;
-        const show = () => {
-          setPolaroid(true);
-          window.clearTimeout(polaroidTimer.current);
-          polaroidTimer.current = window.setTimeout(() => setPolaroid(false), 7000);
-        };
-        img.decode().then(show, show);
+        const on = toggleSkin('poker', [{ src: POKER_PHOTO, alt: h.eggs.pokerAlt, caption: h.eggs.pokerCaption }]);
+        setEgg(on ? 'poker' : 'pokerOff');
+        break;
+      }
+      case 'renan': {
+        const on = toggleSkin('rio', RIO_PHOTOS.map((src, i) => ({
+          src, alt: h.eggs.renanAlts[i], caption: h.eggs.renanCaptions[i], width: 900, height: 1200,
+        })));
+        if (on) stage?.wave();
+        setEgg(on ? 'renan' : 'renanOff');
         break;
       }
       case 'curbas':
@@ -376,10 +394,10 @@ const Hero = () => {
         restoreGravity.current = null;
         setEgg('gravityOff');
       }
-      if (pokerRef.current) {
-        pokerRef.current = false;
-        stageRef.current?.setPoker(false);
-        setEgg('pokerOff');
+      if (skinRef.current) {
+        setEgg(skinRef.current === 'rio' ? 'renanOff' : 'pokerOff');
+        skinRef.current = null;
+        stageRef.current?.setSkin(null);
       }
     };
     window.addEventListener('keydown', onKey);
@@ -443,7 +461,7 @@ const Hero = () => {
     <section id="top" ref={sectionRef} className="hero" aria-labelledby="hero-title">
       <TestRunner run={testRun} />
       <Shout text={shout} />
-      <Polaroid open={polaroid} src={POKER_PHOTO} alt={h.eggs.pokerAlt} caption={h.eggs.pokerCaption} onClose={() => setPolaroid(false)} />
+      <Polaroids photos={photos} onClose={() => setPhotos(null)} />
       {pipeline >= 0 && (
         <ol className="pipeline mono" aria-label="Pipeline">
           {h.pipeline.map((label, i) => (
