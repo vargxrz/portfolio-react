@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion';
-import { ArrowRight, Download, Keyboard } from 'lucide-react';
+import { ArrowRight, Command, Download } from 'lucide-react';
 import KeyboardCanvas from './KeyboardCanvas.jsx';
+import CommandSheet from './CommandSheet.jsx';
 import { Polaroids, Shout, TestRunner } from './EggOverlays.jsx';
 import useBootReady from '../hooks/useBootReady.js';
-import { markFound } from '../lib/eggs.js';
+import { canonical, getFound, markFound } from '../lib/eggs.js';
 import { useI18n } from '../contexts/I18nContext.jsx';
 import { LINKS } from '../content.js';
 import { scrollToId } from '../hooks/useSmoothScroll.js';
@@ -314,63 +315,62 @@ const Hero = () => {
   const typeRef = useRef(typeLetter);
   typeRef.current = typeLetter;
 
-  // ---- on-screen keyboard (touch) -------------------------------------------------
-  const softInputRef = useRef(null);
-  const [softOpen, setSoftOpen] = useState(false);
-  const openSoftKeyboard = () => {
-    const input = softInputRef.current;
-    if (!input) return;
-    input.value = ' ';
-    // must run inside the tap handler, or iOS refuses to show the keyboard
-    input.focus({ preventScroll: true });
-    input.setSelectionRange(1, 1);
-  };
-  const onSoftInput = (e) => {
-    const input = e.currentTarget;
-    const value = input.value;
-    if (value.length === 0) {
-      backspace(); // the sentinel space was deleted
-    } else {
-      for (const raw of value.slice(1)) {
-        const ch = raw.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-        if (!/^[a-z]$/.test(ch)) continue;
+  // ---- phones: pick a command from a sheet instead of typing it ------------------------
+  const [cmdOpen, setCmdOpen] = useState(false);
+  const closeCommands = useCallback(() => setCmdOpen(false), []);
+  const [found, setFound] = useState(getFound);
+  useEffect(() => {
+    const onFound = () => setFound(getFound());
+    window.addEventListener('eggs:found', onFound);
+    return () => window.removeEventListener('eggs:found', onFound);
+  }, []);
+
+  // "types" a command on the 3D keys, letter by letter
+  const typeTimers = useRef([]);
+  const typeWord = (word) => {
+    typeTimers.current.forEach(window.clearTimeout);
+    typeTimers.current = [];
+    bufferRef.current = '';
+    setChars([]);
+    setEgg(null);
+    [...word].forEach((ch, i) => {
+      typeTimers.current.push(window.setTimeout(() => {
         stageRef.current?.keyDown(ch);
         typeRef.current(ch);
-        window.setTimeout(() => stageRef.current?.keyUp(ch), 110);
-      }
-    }
-    input.value = ' ';
-    input.setSelectionRange(1, 1);
+      }, i * 110));
+      typeTimers.current.push(window.setTimeout(() => stageRef.current?.keyUp(ch), i * 110 + 80));
+    });
+  };
+  useEffect(() => () => typeTimers.current.forEach(window.clearTimeout), []);
+
+  const pickCommand = (word) => {
+    setCmdOpen(false);
+    // once the sheet is away, bring the keys into view and type on them
+    typeTimers.current.push(window.setTimeout(() => {
+      const stage = sectionRef.current?.querySelector('.hero__stage');
+      const top = stage?.getBoundingClientRect().top ?? 0;
+      if (top < 64) window.scrollBy({ top: top - 80, behavior: reduced() ? 'auto' : 'smooth' });
+      typeTimers.current.push(window.setTimeout(() => typeWord(word), top < 64 ? 350 : 0));
+    }, 260));
   };
 
   // Commands clicked in the header notebook are "typed" for the visitor, key by key.
+  const typeWordRef = useRef(typeWord);
+  typeWordRef.current = typeWord;
   useEffect(() => {
-    let timers = [];
+    let wait = 0;
     const onRun = (e) => {
       const word = String(e.detail || '');
-      timers.forEach(window.clearTimeout);
-      timers = [];
-      const start = () => {
-        bufferRef.current = '';
-        setChars([]);
-        setEgg(null);
-        [...word].forEach((ch, i) => {
-          timers.push(window.setTimeout(() => {
-            stageRef.current?.keyDown(ch);
-            typeRef.current(ch);
-          }, i * 110));
-          timers.push(window.setTimeout(() => stageRef.current?.keyUp(ch), i * 110 + 80));
-        });
-      };
+      window.clearTimeout(wait);
       if (window.scrollY > 40) {
         scrollToId('top');
-        timers.push(window.setTimeout(start, 900));
-      } else start();
+        wait = window.setTimeout(() => typeWordRef.current(word), 900);
+      } else typeWordRef.current(word);
     };
     window.addEventListener('egg:run', onRun);
     return () => {
       window.removeEventListener('egg:run', onRun);
-      timers.forEach(window.clearTimeout);
+      window.clearTimeout(wait);
     };
   }, []);
 
@@ -531,37 +531,22 @@ const Hero = () => {
                   </AnimatePresence>
                   <motion.span layout className="hero__caret" />
                 </span>
-                {/* Touch screens have no physical keyboard: this real (but invisible) input
-                    summons the on-screen one. A sentinel space lets Backspace be detected
-                    on every mobile keyboard (some never fire key events). */}
-                <input
-                  ref={softInputRef}
-                  className="hero__soft-input"
-                  type="text"
-                  defaultValue=" "
-                  aria-label={h.typeLabel}
-                  autoComplete="off"
-                  autoCorrect="off"
-                  autoCapitalize="off"
-                  spellCheck={false}
-                  enterKeyHint="done"
-                  onInput={onSoftInput}
-                  onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
-                  onFocus={() => setSoftOpen(true)}
-                  onBlur={() => setSoftOpen(false)}
-                />
               </div>
               {touch && (
                 <button
                   type="button"
-                  className={`hero__kbd-btn${softOpen ? ' is-open' : ''}`}
-                  onPointerDown={(e) => { if (softOpen) e.preventDefault(); }}
-                  onClick={() => (softOpen ? softInputRef.current?.blur() : openSoftKeyboard())}
+                  className="hero__cmd-btn"
+                  aria-haspopup="dialog"
+                  onClick={() => setCmdOpen(true)}
                 >
-                  <Keyboard size={16} strokeWidth={1.8} aria-hidden="true" />
-                  {softOpen ? h.typeClose : h.typeOpen}
+                  <Command size={16} strokeWidth={1.8} aria-hidden="true" />
+                  {h.cmdOpen}
+                  <span className="mono hero__cmd-count">
+                    {t.commands.list.filter((cmd) => found.has(canonical(cmd.word))).length}/{t.commands.list.length}
+                  </span>
                 </button>
               )}
+              <CommandSheet open={cmdOpen} found={found} onClose={closeCommands} onPick={pickCommand} />
               <AnimatePresence mode="wait">
                 {egg && (
                   <motion.div
