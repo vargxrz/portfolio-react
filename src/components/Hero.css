@@ -225,6 +225,17 @@
   animation: blink 1s steps(1) infinite;
 }
 
+/* phones can't type freely (commands come from the sheet), so no text caret */
+@media (hover: none) {
+  .hero__caret {
+    display: none;
+  }
+
+  .hero__typed {
+    min-height: 0;
+  }
+}
+
 @keyframes blink {
   50% { opacity: 0; }
 }
