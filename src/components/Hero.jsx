@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion';
-import { ArrowRight, Command, Download } from 'lucide-react';
+import { ArrowRight, Command, Download, RotateCcw } from 'lucide-react';
 import KeyboardCanvas from './KeyboardCanvas.jsx';
 import CommandSheet from './CommandSheet.jsx';
 import { Polaroids, Shout, TestRunner } from './EggOverlays.jsx';
@@ -76,6 +77,19 @@ const Hero = () => {
   const [down, setDown] = useState(() => new Set());
   const [egg, setEgg] = useState(null);
   const [touch, setTouch] = useState(false);
+
+  // "sagrav": every section flips; layers are promoted only while the flip animates
+  const [flipped, setFlipped] = useState(false);
+  const flipTimer = useRef(0);
+  const setFlip = (on) => {
+    const root = document.documentElement;
+    root.classList.add('is-flipping');
+    root.classList.toggle('is-flipped', on);
+    setFlipped(on);
+    window.clearTimeout(flipTimer.current);
+    flipTimer.current = window.setTimeout(() => root.classList.remove('is-flipping'), 1200);
+  };
+  useEffect(() => () => window.clearTimeout(flipTimer.current), []);
 
   useEffect(() => {
     const mq = window.matchMedia('(hover: none)');
@@ -300,8 +314,9 @@ const Hero = () => {
         setEgg('ana');
         break;
       case 'sagrav': {
-        const flipped = document.documentElement.classList.toggle('is-flipped');
-        setEgg(flipped ? 'sagravOn' : 'sagravOff');
+        const on = !document.documentElement.classList.contains('is-flipped');
+        setFlip(on);
+        setEgg(on ? 'sagravOn' : 'sagravOff');
         break;
       }
       case 'joao':
@@ -386,7 +401,7 @@ const Hero = () => {
     const onKey = (e) => {
       if (e.key !== 'Escape') return;
       if (document.documentElement.classList.contains('is-flipped')) {
-        document.documentElement.classList.remove('is-flipped');
+        setFlip(false);
         setEgg('sagravOff');
       }
       if (restoreGravity.current) {
@@ -403,7 +418,7 @@ const Hero = () => {
     window.addEventListener('keydown', onKey);
     return () => {
       window.removeEventListener('keydown', onKey);
-      document.documentElement.classList.remove('is-flipped');
+      document.documentElement.classList.remove('is-flipped', 'is-flipping');
     };
   }, []);
 
@@ -462,6 +477,27 @@ const Hero = () => {
       <TestRunner run={testRun} />
       <Shout text={shout} />
       <Polaroids photos={photos} onClose={() => setPhotos(null)} />
+      {/* phones have no Esc: a floating button (outside the flipped sections) turns it back */}
+      {createPortal(
+        <AnimatePresence>
+          {touch && flipped && (
+            <motion.button
+              type="button"
+              className="unflip-btn"
+              onClick={() => { setFlip(false); setEgg('sagravOff'); }}
+              initial={{ opacity: 0, y: 40, rotate: 180, x: '-50%' }}
+              animate={{ opacity: 1, y: 0, rotate: 0, x: '-50%' }}
+              exit={{ opacity: 0, y: 40, x: '-50%', transition: { duration: 0.25 } }}
+              transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.5 }}
+              whileTap={{ scale: 0.92 }}
+            >
+              <RotateCcw size={17} strokeWidth={2.2} aria-hidden="true" />
+              {h.unflip}
+            </motion.button>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
       {pipeline >= 0 && (
         <ol className="pipeline mono" aria-label="Pipeline">
           {h.pipeline.map((label, i) => (

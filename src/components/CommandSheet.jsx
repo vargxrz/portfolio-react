@@ -93,8 +93,6 @@ const CommandSheet = ({ open, found, onClose, onPick }) => {
                         onClick={() => onPick(cmd.word)}
                       >
                         <span className="cap cmd-card__word">{cmd.word}</span>
-                        <span className="visually-hidden">: </span>
-                        <span className="cmd-card__desc">{cmd.desc}</span>
                         {isFound && (
                           <span className="cmd-card__check" aria-label={c.found}>
                             <Check size={12} strokeWidth={2.8} />
